@@ -75,7 +75,6 @@ def header():
     st.markdown("""
     <div class='main-title'>
       <h1>Grab Executive Dashboard</h1>
-      <p>Problem-led analytical views for Driver Trust, Super-App Growth, and Pricing Fairness.</p>
     </div>
     """, unsafe_allow_html=True)
 
