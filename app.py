@@ -54,7 +54,7 @@ div[data-baseweb="select"] > div, div[data-baseweb="base-input"] > div {{border-
 </style>
 """, unsafe_allow_html=True)
 
-alt.themes.enable("default")
+alt.theme.enable("default")
 
 @st.cache_data
 def load_data(uploaded=None):
@@ -124,13 +124,20 @@ def filter_panel(df):
 
 
 def apply_chart_style(chart):
-    return chart.properties(height=300).configure_view(stroke=None).configure_axis(
+    return chart.configure_view(stroke=None).configure_axis(
         labelColor=GRAB_TEXT,
         titleColor=GRAB_TEXT,
         gridColor="#E8F1EC",
         domainColor="#D7E7DE",
         tickColor="#D7E7DE"
     ).configure_legend(labelColor=GRAB_TEXT, titleColor=GRAB_TEXT).configure_title(color=GRAB_TEXT)
+
+
+def with_optional_title(chart, title=None, height=300):
+    chart = apply_chart_style(chart).properties(height=height)
+    if title:
+        chart = chart.properties(title=title)
+    return chart
 
 
 def bar_chart(df, x, y, title=None, color=GRAB_GREEN, sort='-y', x_type='N', y_title=None, tooltip=None):
@@ -140,7 +147,7 @@ def bar_chart(df, x, y, title=None, color=GRAB_GREEN, sort='-y', x_type='N', y_t
         y=alt.Y(f'{y}:Q', title=y_title or y.replace('_',' ').title()),
         tooltip=tooltip
     )
-    return apply_chart_style(chart).properties(title=title)
+    return with_optional_title(chart, title)
 
 
 def grouped_bar(df, x, y, color_field, title=None, palette=None, x_type='N'):
@@ -152,7 +159,7 @@ def grouped_bar(df, x, y, color_field, title=None, palette=None, x_type='N'):
         xOffset=f'{color_field}:N',
         tooltip=[x, color_field, y]
     )
-    return apply_chart_style(chart).properties(title=title)
+    return with_optional_title(chart, title)
 
 
 def line_chart(df, x, y, color_field=None, title=None, palette=None, x_type='N'):
@@ -166,7 +173,7 @@ def line_chart(df, x, y, color_field=None, title=None, palette=None, x_type='N')
         enc['color'] = alt.Color(f'{color_field}:N', scale=scale, title=color_field.replace('_',' ').title())
         enc['tooltip'] = [x, color_field, y]
     chart = alt.Chart(df).mark_line(point=True, strokeWidth=3).encode(**enc)
-    return apply_chart_style(chart).properties(title=title)
+    return with_optional_title(chart, title)
 
 
 def scatter_chart(df, x, y, size=None, color_field=None, title=None, palette=None, tooltip=None):
@@ -181,7 +188,7 @@ def scatter_chart(df, x, y, size=None, color_field=None, title=None, palette=Non
         enc['color'] = alt.Color(f'{color_field}:N', scale=scale, title=color_field.replace('_',' ').title())
     enc['tooltip'] = tooltip or [x, y]
     chart = alt.Chart(df).mark_circle(opacity=0.78, stroke='white', strokeWidth=0.7).encode(**enc)
-    return apply_chart_style(chart).properties(title=title)
+    return with_optional_title(chart, title)
 
 
 def heatmap_chart(df, x, y, color, title=None, scheme='greens'):
@@ -194,7 +201,7 @@ def heatmap_chart(df, x, y, color, title=None, scheme='greens'):
     text = alt.Chart(df).mark_text(fontSize=11, color=GRAB_TEXT).encode(
         x=f'{x}:N', y=f'{y}:N', text=alt.Text(f'{color}:Q', format='.1f')
     )
-    return apply_chart_style(chart + text).properties(title=title, height=260)
+    return with_optional_title(chart + text, title, height=260)
 
 
 def band_counts(series, bins, labels, name='Band'):
