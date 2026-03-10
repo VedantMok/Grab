@@ -1,12 +1,15 @@
 from pathlib import Path
-import numpy as np
 import pandas as pd
+import numpy as np
+import altair as alt
 import streamlit as st
 
 st.set_page_config(page_title="Grab Executive Dashboard", page_icon="🟢", layout="wide", initial_sidebar_state="collapsed")
 BASE_DIR = Path(__file__).resolve().parent
 DATA_FILE = "grab_superapp_synthetic.csv"
+
 GRAB_GREEN = "#00B14F"
+GRAB_GREEN_DARK = "#0B6B3A"
 GRAB_GREEN_SOFT = "#EAF8F0"
 GRAB_TEXT = "#143524"
 GRAB_BORDER = "#DCEEE3"
@@ -15,41 +18,43 @@ CARD = "#FFFFFF"
 TEAL = "#0EA5A4"
 AMBER = "#F59E0B"
 RED = "#E5484D"
+GRAY = "#6B7C72"
 
 st.markdown(f"""
 <style>
 .stApp {{background:{BG}; color:{GRAB_TEXT};}}
-.block-container {{padding-top:1rem; padding-bottom:1.5rem; max-width:95%;}}
+.block-container {{padding-top:1rem; padding-bottom:1.4rem; max-width:95%;}}
 [data-testid="stSidebar"] {{display:none;}}
 header[data-testid="stHeader"] {{background:transparent;}}
-.main-title {{background:#fff; border:1px solid {GRAB_BORDER}; border-radius:18px; padding:1rem 1.15rem; margin-bottom:.9rem; box-shadow:0 6px 20px rgba(0,0,0,.03);}}
-.main-title h1 {{margin:0; font-size:1.8rem; color:{GRAB_TEXT};}}
+.main-title {{background:#fff; border:1px solid {GRAB_BORDER}; border-radius:18px; padding:1rem 1.15rem; margin-bottom:.9rem; box-shadow:0 6px 18px rgba(0,0,0,.03);}}
+.main-title h1 {{margin:0; font-size:1.85rem; color:{GRAB_TEXT};}}
 .main-title p {{margin:.25rem 0 0 0; color:#587262; font-size:.92rem;}}
-.metric-card {{background:{CARD}; border:1px solid {GRAB_BORDER}; border-radius:16px; padding:.95rem 1rem; box-shadow:0 6px 18px rgba(0,0,0,.03);}}
-.metric-label {{font-size:.75rem; text-transform:uppercase; letter-spacing:.08em; color:#5E7868; margin-bottom:.2rem;}}
-.metric-value {{font-size:1.8rem; font-weight:800; color:{GRAB_TEXT}; line-height:1.05;}}
-.metric-note {{font-size:.8rem; color:#617B6C; margin-top:.3rem;}}
-.section-card {{background:{CARD}; border:1px solid {GRAB_BORDER}; border-radius:16px; padding:.95rem 1rem .8rem 1rem; margin-bottom:.8rem; box-shadow:0 6px 18px rgba(0,0,0,.03);}}
-.section-title {{font-size:1rem; font-weight:800; color:{GRAB_TEXT}; margin-bottom:.45rem;}}
-.section-sub {{font-size:.84rem; color:#607A6A; margin-bottom:.65rem;}}
-.problem-head {{background:#fff; border:1px solid {GRAB_BORDER}; border-left:6px solid {GRAB_GREEN}; border-radius:16px; padding:.9rem 1rem; margin-bottom:.85rem;}}
+.metric-card {{background:{CARD}; border:1px solid {GRAB_BORDER}; border-radius:16px; padding:.9rem 1rem; box-shadow:0 6px 16px rgba(0,0,0,.03);}}
+.metric-label {{font-size:.74rem; text-transform:uppercase; letter-spacing:.08em; color:#5E7868; margin-bottom:.2rem;}}
+.metric-value {{font-size:1.8rem; font-weight:800; color:{GRAB_TEXT}; line-height:1.02;}}
+.metric-note {{font-size:.8rem; color:#617B6C; margin-top:.28rem;}}
+.section-card {{background:#fff; border:1px solid {GRAB_BORDER}; border-radius:16px; padding:.92rem 1rem .72rem 1rem; margin-bottom:.78rem; box-shadow:0 6px 18px rgba(0,0,0,.03);}}
+.section-title {{font-size:1rem; font-weight:800; color:{GRAB_TEXT}; margin-bottom:.42rem;}}
+.section-sub {{font-size:.84rem; color:#607A6A; margin-bottom:.62rem;}}
+.problem-head {{background:#fff; border:1px solid {GRAB_BORDER}; border-left:6px solid {GRAB_GREEN}; border-radius:16px; padding:.9rem 1rem; margin-bottom:.82rem;}}
 .problem-head.ps2 {{border-left-color:{TEAL};}}
 .problem-head.ps3 {{border-left-color:{AMBER};}}
-.problem-head h2 {{margin:0; font-size:1.1rem; color:{GRAB_TEXT};}}
-.problem-head p {{margin:.3rem 0 0 0; color:#5F7869; font-size:.9rem;}}
-.action-box {{background:#fff; border:1px solid {GRAB_BORDER}; border-radius:14px; padding:.9rem 1rem; margin-bottom:.65rem;}}
+.problem-head h2 {{margin:0; font-size:1.08rem; color:{GRAB_TEXT};}}
+.problem-head p {{margin:.28rem 0 0 0; color:#5F7869; font-size:.9rem;}}
+.action-box {{background:#fff; border:1px solid {GRAB_BORDER}; border-radius:14px; padding:.88rem 1rem; margin-bottom:.62rem;}}
 .action-box.green {{border-left:5px solid {GRAB_GREEN};}}
 .action-box.amber {{border-left:5px solid {AMBER};}}
 .action-box.red {{border-left:5px solid {RED};}}
-.action-box h4 {{margin:0 0 .25rem 0; color:{GRAB_TEXT}; font-size:.98rem;}}
-.action-box p {{margin:.22rem 0; font-size:.84rem; color:#5F7869;}}
-.small-label {{font-size:.76rem; color:#617B6C; text-transform:uppercase; letter-spacing:.08em; margin-bottom:.2rem;}}
+.action-box h4 {{margin:0 0 .22rem 0; color:{GRAB_TEXT}; font-size:.98rem;}}
+.action-box p {{margin:.2rem 0; font-size:.84rem; color:#5F7869;}}
 .stTabs [data-baseweb="tab-list"] {{gap:.35rem;}}
 .stTabs [data-baseweb="tab"] {{background:#fff; border:1px solid {GRAB_BORDER}; border-radius:12px 12px 0 0; padding:.55rem .9rem;}}
 .stTabs [aria-selected="true"] {{color:{GRAB_GREEN} !important; border-bottom:2px solid {GRAB_GREEN} !important;}}
 div[data-baseweb="select"] > div, div[data-baseweb="base-input"] > div {{border-color:{GRAB_BORDER} !important;}}
 </style>
 """, unsafe_allow_html=True)
+
+alt.themes.enable("default")
 
 @st.cache_data
 def load_data(uploaded=None):
@@ -118,28 +123,88 @@ def filter_panel(df):
     return view
 
 
-def prep_bar(df, group_col, value_col, agg='mean', pct=False, sort_desc=True):
-    out = df.groupby(group_col)[value_col].agg(agg).reset_index()
-    if pct:
-        out[value_col] = out[value_col] * 100
-    out = out.sort_values(value_col, ascending=not sort_desc).set_index(group_col)
+def apply_chart_style(chart):
+    return chart.properties(height=300).configure_view(stroke=None).configure_axis(
+        labelColor=GRAB_TEXT,
+        titleColor=GRAB_TEXT,
+        gridColor="#E8F1EC",
+        domainColor="#D7E7DE",
+        tickColor="#D7E7DE"
+    ).configure_legend(labelColor=GRAB_TEXT, titleColor=GRAB_TEXT).configure_title(color=GRAB_TEXT)
+
+
+def bar_chart(df, x, y, title=None, color=GRAB_GREEN, sort='-y', x_type='N', y_title=None, tooltip=None):
+    tooltip = tooltip or [x, y]
+    chart = alt.Chart(df).mark_bar(cornerRadiusTopLeft=4, cornerRadiusTopRight=4, color=color).encode(
+        x=alt.X(f'{x}:{x_type}', sort=sort, title=x.replace('_',' ').title()),
+        y=alt.Y(f'{y}:Q', title=y_title or y.replace('_',' ').title()),
+        tooltip=tooltip
+    )
+    return apply_chart_style(chart).properties(title=title)
+
+
+def grouped_bar(df, x, y, color_field, title=None, palette=None, x_type='N'):
+    scale = alt.Scale(range=palette) if palette else alt.Undefined
+    chart = alt.Chart(df).mark_bar(cornerRadiusTopLeft=3, cornerRadiusTopRight=3).encode(
+        x=alt.X(f'{x}:{x_type}', title=x.replace('_',' ').title()),
+        y=alt.Y(f'{y}:Q', title=y.replace('_',' ').title()),
+        color=alt.Color(f'{color_field}:N', scale=scale, title=color_field.replace('_',' ').title()),
+        xOffset=f'{color_field}:N',
+        tooltip=[x, color_field, y]
+    )
+    return apply_chart_style(chart).properties(title=title)
+
+
+def line_chart(df, x, y, color_field=None, title=None, palette=None, x_type='N'):
+    enc = {
+        'x': alt.X(f'{x}:{x_type}', title=x.replace('_',' ').title()),
+        'y': alt.Y(f'{y}:Q', title=y.replace('_',' ').title()),
+        'tooltip': [x, y]
+    }
+    if color_field:
+        scale = alt.Scale(range=palette) if palette else alt.Undefined
+        enc['color'] = alt.Color(f'{color_field}:N', scale=scale, title=color_field.replace('_',' ').title())
+        enc['tooltip'] = [x, color_field, y]
+    chart = alt.Chart(df).mark_line(point=True, strokeWidth=3).encode(**enc)
+    return apply_chart_style(chart).properties(title=title)
+
+
+def scatter_chart(df, x, y, size=None, color_field=None, title=None, palette=None, tooltip=None):
+    enc = {
+        'x': alt.X(f'{x}:Q', title=x.replace('_',' ').title()),
+        'y': alt.Y(f'{y}:Q', title=y.replace('_',' ').title())
+    }
+    if size:
+        enc['size'] = alt.Size(f'{size}:Q', title=size.replace('_',' ').title())
+    if color_field:
+        scale = alt.Scale(range=palette) if palette else alt.Undefined
+        enc['color'] = alt.Color(f'{color_field}:N', scale=scale, title=color_field.replace('_',' ').title())
+    enc['tooltip'] = tooltip or [x, y]
+    chart = alt.Chart(df).mark_circle(opacity=0.78, stroke='white', strokeWidth=0.7).encode(**enc)
+    return apply_chart_style(chart).properties(title=title)
+
+
+def heatmap_chart(df, x, y, color, title=None, scheme='greens'):
+    chart = alt.Chart(df).mark_rect().encode(
+        x=alt.X(f'{x}:N', title=x.replace('_',' ').title()),
+        y=alt.Y(f'{y}:N', title=y.replace('_',' ').title()),
+        color=alt.Color(f'{color}:Q', scale=alt.Scale(scheme=scheme), title=color.replace('_',' ').title()),
+        tooltip=[x, y, color]
+    )
+    text = alt.Chart(df).mark_text(fontSize=11, color=GRAB_TEXT).encode(
+        x=f'{x}:N', y=f'{y}:N', text=alt.Text(f'{color}:Q', format='.1f')
+    )
+    return apply_chart_style(chart + text).properties(title=title, height=260)
+
+
+def band_counts(series, bins, labels, name='Band'):
+    out = pd.cut(series, bins=bins, labels=labels, include_lowest=True).value_counts().sort_index().reset_index()
+    out.columns = [name, 'Customers']
     return out
 
 
-def prep_two_metric(df, group_col, m1, m2, pct_cols=None):
-    out = df.groupby(group_col).agg({m1:'mean', m2:'mean'}).reset_index()
-    pct_cols = pct_cols or []
-    for c in pct_cols:
-        if c in out.columns:
-            out[c] = out[c] * 100
-    return out.set_index(group_col)
-
-
-def styled_top(df, cols, n=12, by=None, asc=False):
-    out = df[cols].copy()
-    if by is not None:
-        out = out.sort_values(by, ascending=asc)
-    return out.head(n)
+def top_rows(df, cols, sort_cols, ascending, n=12):
+    return df[cols].sort_values(sort_cols, ascending=ascending).head(n)
 
 
 def master_ps1(view):
@@ -150,29 +215,31 @@ def master_ps1(view):
     kpi_card(c4,'Complaint load',f"{view['complaint_count_90d'].mean():.1f}",'Average complaints over 90d')
     kpi_card(c5,'Trust score',f"{view['trust_score'].mean():.1f}",'Higher is better')
 
-    a,b = st.columns([1,1])
+    a,b = st.columns(2)
     with a:
         section_open('Risk map','Master view of where booking failure is concentrated.')
-        st.bar_chart(prep_bar(view,'country','bad_booking_label',pct=True))
+        rc = view.groupby('country', as_index=False)['bad_booking_label'].mean()
+        rc['bad_booking_pct'] = rc['bad_booking_label']*100
+        st.altair_chart(bar_chart(rc, 'country', 'bad_booking_pct', color=GRAB_GREEN, y_title='Bad booking %'), use_container_width=True)
         section_close()
-        section_open('Driver tier pressure','Reliability tier mix across the filtered population.')
-        st.bar_chart(view['assigned_driver_tier'].value_counts().to_frame('Customers'))
+        section_open('Tier and trust profile','Driver reliability mix and resulting trust effect.')
+        dt = view.groupby('assigned_driver_tier', as_index=False).agg(customers=('customer_id','count'), trust_score=('trust_score','mean'))
+        st.altair_chart(grouped_bar(dt.melt('assigned_driver_tier', var_name='Metric', value_name='Value'), 'assigned_driver_tier', 'Value', 'Metric', palette=[GRAB_GREEN, TEAL]), use_container_width=True)
         section_close()
     with b:
         section_open('ETA realism','Average promised versus actual arrival by country.')
-        eta = view.groupby('country')[['avg_eta_promised_min','avg_eta_actual_min']].mean().round(1)
-        st.line_chart(eta)
+        eta = view.groupby('country', as_index=False)[['avg_eta_promised_min','avg_eta_actual_min']].mean().melt('country', var_name='Metric', value_name='Minutes')
+        st.altair_chart(grouped_bar(eta, 'country', 'Minutes', 'Metric', palette=[GRAB_GREEN, AMBER]), use_container_width=True)
         section_close()
         section_open('High-risk queue','Priority customers needing intervention now.')
-        q = styled_top(view,['customer_id','country','assigned_driver_tier','booking_risk_score','eta_gap_min','clv_12m_usd'],12,['booking_risk_score','clv_12m_usd'])
+        q = top_rows(view, ['customer_id','country','assigned_driver_tier','booking_risk_score','eta_gap_min','clv_12m_usd'], ['booking_risk_score','clv_12m_usd'], [False, False], 12)
         st.dataframe(q, use_container_width=True, hide_index=True)
         section_close()
 
     x,y = st.columns([1.15,.85])
     with x:
         section_open('Context drivers','Risk rises when low-supply exposure and ETA gap both increase.')
-        sc = view[['low_supply_zone_share','eta_gap_min','booking_risk_score']].copy()
-        st.scatter_chart(sc, x='low_supply_zone_share', y='booking_risk_score', size='eta_gap_min')
+        st.altair_chart(scatter_chart(view, 'low_supply_zone_share', 'booking_risk_score', size='eta_gap_min', color_field='assigned_driver_tier', palette=[GRAB_GREEN, TEAL, RED], tooltip=['customer_id','country','low_supply_zone_share','eta_gap_min','booking_risk_score','assigned_driver_tier']), use_container_width=True)
         section_close()
     with y:
         st.markdown(f"""
@@ -186,27 +253,32 @@ def descriptive_ps1(view):
     a,b = st.columns(2)
     with a:
         section_open('Failed booking by country','Current distribution of booking failures.')
-        st.bar_chart(prep_bar(view,'country','bad_booking_label',pct=True))
+        rc = view.groupby('country', as_index=False)['bad_booking_label'].mean(); rc['bad_booking_pct']=rc['bad_booking_label']*100
+        st.altair_chart(bar_chart(rc,'country','bad_booking_pct',color=GRAB_GREEN,y_title='Bad booking %'), use_container_width=True)
         section_close()
         section_open('Driver tier distribution','How exposure is split across reliability buckets.')
-        st.bar_chart(view['assigned_driver_tier'].value_counts().to_frame('Customers'))
+        dt = view['assigned_driver_tier'].value_counts().reset_index(); dt.columns=['assigned_driver_tier','Customers']
+        st.altair_chart(bar_chart(dt,'assigned_driver_tier','Customers',color=TEAL), use_container_width=True)
         section_close()
     with b:
         section_open('Complaints by driver tier','Average complaint load by reliability tier.')
-        st.bar_chart(prep_bar(view,'assigned_driver_tier','complaint_count_90d'))
+        comp = view.groupby('assigned_driver_tier', as_index=False)['complaint_count_90d'].mean()
+        st.altair_chart(bar_chart(comp,'assigned_driver_tier','complaint_count_90d',color=AMBER), use_container_width=True)
         section_close()
         section_open('ETA gap by country','Operational pain point by market.')
-        st.bar_chart(prep_bar(view,'country','eta_gap_min'))
+        eg = view.groupby('country', as_index=False)['eta_gap_min'].mean()
+        st.altair_chart(bar_chart(eg,'country','eta_gap_min',color=RED), use_container_width=True)
         section_close()
-
     c,d = st.columns(2)
     with c:
         section_open('Rush-hour exposure','Who is booking in harder operating windows.')
-        st.bar_chart(prep_bar(view,'country','rush_hour_share',pct=True))
+        rh = view.groupby('country', as_index=False)['rush_hour_share'].mean(); rh['rush_hour_pct']=rh['rush_hour_share']*100
+        st.altair_chart(bar_chart(rh,'country','rush_hour_pct',color=GRAB_GREEN,y_title='Rush-hour %'), use_container_width=True)
         section_close()
     with d:
-        section_open('Low-supply zone exposure','Share of users exposed to thin supply conditions.')
-        st.bar_chart(prep_bar(view,'country','low_supply_zone_share',pct=True))
+        section_open('Low-supply exposure','Share of users exposed to thin supply conditions.')
+        ls = view.groupby('country', as_index=False)['low_supply_zone_share'].mean(); ls['low_supply_pct']=ls['low_supply_zone_share']*100
+        st.altair_chart(bar_chart(ls,'country','low_supply_pct',color=TEAL,y_title='Low-supply %'), use_container_width=True)
         section_close()
 
 
@@ -214,27 +286,28 @@ def diagnostic_ps1(view):
     a,b = st.columns(2)
     with a:
         section_open('Risk drivers by tier','Booking risk and failure move with driver quality.')
-        diag = view.groupby('assigned_driver_tier')[['booking_risk_score','failed_booking_rate_90d','eta_gap_min']].mean().round(2)
-        st.bar_chart(diag)
+        diag = view.groupby('assigned_driver_tier', as_index=False)[['booking_risk_score','failed_booking_rate_90d','eta_gap_min']].mean().melt('assigned_driver_tier', var_name='Metric', value_name='Value')
+        diag.loc[diag['Metric']=='failed_booking_rate_90d','Value'] *= 100
+        st.altair_chart(grouped_bar(diag,'assigned_driver_tier','Value','Metric',palette=[GRAB_GREEN,TEAL,RED]), use_container_width=True)
         section_close()
     with b:
         section_open('Customer value exposure','High-value customers should face lower failure risk, not higher.')
-        val = view.groupby('customer_value_tier')[['bad_booking_label','booking_risk_score','trust_score']].mean().round(2)
-        val['bad_booking_label'] = val['bad_booking_label']*100
-        st.bar_chart(val)
+        val = view.groupby('customer_value_tier', as_index=False)[['bad_booking_label','booking_risk_score','trust_score']].mean()
+        val['bad_booking_label'] *= 100
+        melt = val.melt('customer_value_tier', var_name='Metric', value_name='Value')
+        st.altair_chart(grouped_bar(melt,'customer_value_tier','Value','Metric',palette=[RED,TEAL,GRAB_GREEN]), use_container_width=True)
         section_close()
-
     c,d = st.columns(2)
     with c:
         section_open('Supply vs failure','Higher low-supply exposure aligns with higher failed booking rate.')
-        bins = pd.cut(view['low_supply_zone_share'], bins=[0,0.2,0.35,0.5,1], labels=['Very low','Low','Medium','High'])
-        grp = view.groupby(bins)['bad_booking_label'].mean().mul(100).to_frame('Bad booking %')
-        st.bar_chart(grp)
+        tmp = view.copy()
+        tmp['supply_band'] = pd.cut(tmp['low_supply_zone_share'], bins=[0,0.2,0.35,0.5,1], labels=['Very low','Low','Medium','High'], include_lowest=True)
+        grp = tmp.groupby('supply_band', as_index=False)['bad_booking_label'].mean(); grp['bad_booking_pct']=grp['bad_booking_label']*100
+        st.altair_chart(bar_chart(grp,'supply_band','bad_booking_pct',color=AMBER,y_title='Bad booking %'), use_container_width=True)
         section_close()
     with d:
         section_open('ETA miss vs trust','Wider ETA miss erodes trust directly.')
-        sc = view[['eta_gap_min','trust_score','refund_delay_days_avg']].copy()
-        st.scatter_chart(sc, x='eta_gap_min', y='trust_score', size='refund_delay_days_avg')
+        st.altair_chart(scatter_chart(view,'eta_gap_min','trust_score',size='refund_delay_days_avg',color_field='assigned_driver_tier',palette=[GRAB_GREEN,TEAL,RED],tooltip=['customer_id','eta_gap_min','trust_score','refund_delay_days_avg','assigned_driver_tier']), use_container_width=True)
         section_close()
 
 
@@ -242,24 +315,25 @@ def predictive_ps1(view):
     a,b = st.columns(2)
     with a:
         section_open('Booking risk distribution','Portfolio spread of predicted booking risk.')
-        risk_band = pd.cut(view['booking_risk_score'], bins=[0,40,55,70,100], labels=['Low','Medium','High','Critical'])
-        st.bar_chart(risk_band.value_counts().sort_index().to_frame('Customers'))
+        rb = band_counts(view['booking_risk_score'], [0,40,55,70,100], ['Low','Medium','High','Critical'], 'Risk band')
+        st.altair_chart(bar_chart(rb,'Risk band','Customers',color=GRAB_GREEN), use_container_width=True)
         section_close()
         section_open('Future failure candidates','Customers most likely to experience the next broken booking.')
-        pred = styled_top(view,['customer_id','country','booking_risk_score','failed_booking_rate_90d','assigned_driver_tier','customer_value_tier'],15,'booking_risk_score')
+        pred = top_rows(view,['customer_id','country','booking_risk_score','failed_booking_rate_90d','assigned_driver_tier','customer_value_tier'],['booking_risk_score'],[False],15)
         st.dataframe(pred, use_container_width=True, hide_index=True)
         section_close()
     with b:
         section_open('Risk by operational context','Predicted risk by rush-hour and late-night exposure.')
-        ctx = view.copy()
-        ctx['rush_band'] = pd.cut(ctx['rush_hour_share'], bins=[0,0.25,0.45,1], labels=['Low','Medium','High'])
-        out = ctx.groupby('rush_band')[['booking_risk_score','bad_booking_label']].mean().round(2)
-        out['bad_booking_label'] = out['bad_booking_label']*100
-        st.line_chart(out)
+        tmp = view.copy(); tmp['rush_band'] = pd.cut(tmp['rush_hour_share'], bins=[0,0.25,0.45,1], labels=['Low','Medium','High'], include_lowest=True)
+        out = tmp.groupby('rush_band', as_index=False)[['booking_risk_score','bad_booking_label']].mean()
+        out['bad_booking_pct']=out['bad_booking_label']*100
+        melt = out.melt('rush_band', value_vars=['booking_risk_score','bad_booking_pct'], var_name='Metric', value_name='Value')
+        st.altair_chart(grouped_bar(melt,'rush_band','Value','Metric',palette=[TEAL,RED]), use_container_width=True)
         section_close()
         section_open('High-risk value pool','How much CLV sits inside the high-risk bucket.')
-        value = view.assign(risk_band=risk_band).groupby('risk_band')['clv_12m_usd'].mean().round(0).to_frame('Avg CLV')
-        st.bar_chart(value)
+        tmp2 = view.copy(); tmp2['risk_band']=pd.cut(tmp2['booking_risk_score'], bins=[0,40,55,70,100], labels=['Low','Medium','High','Critical'], include_lowest=True)
+        value = tmp2.groupby('risk_band', as_index=False)['clv_12m_usd'].mean()
+        st.altair_chart(bar_chart(value,'risk_band','clv_12m_usd',color=GRAB_GREEN_DARK,y_title='Avg CLV'), use_container_width=True)
         section_close()
 
 
@@ -276,12 +350,12 @@ def prescriptive_ps1(view):
         """, unsafe_allow_html=True)
     with b:
         section_open('Actionable queue','Prescriptive queue sorted by business importance.')
-        action = styled_top(view[['customer_id','country','customer_value_tier','booking_risk_score','assigned_driver_tier','recommended_action','clv_12m_usd']], ['customer_id','country','customer_value_tier','booking_risk_score','assigned_driver_tier','recommended_action','clv_12m_usd'], 15, ['booking_risk_score','clv_12m_usd'])
+        action = top_rows(view,['customer_id','country','customer_value_tier','booking_risk_score','assigned_driver_tier','recommended_action','clv_12m_usd'],['booking_risk_score','clv_12m_usd'],[False,False],15)
         st.dataframe(action, use_container_width=True, hide_index=True)
         section_close()
         section_open('Expected effect by action type','Where the largest recoverable value sits.')
-        eff = view.groupby('recommended_action')[['clv_12m_usd','trust_score']].mean().round(1).sort_values('clv_12m_usd', ascending=False).head(8)
-        st.bar_chart(eff)
+        eff = view.groupby('recommended_action', as_index=False)[['clv_12m_usd','trust_score']].mean().sort_values('clv_12m_usd', ascending=False).head(8).melt('recommended_action', var_name='Metric', value_name='Value')
+        st.altair_chart(grouped_bar(eff,'recommended_action','Value','Metric',palette=[GRAB_GREEN,TEAL]), use_container_width=True)
         section_close()
 
 
@@ -296,26 +370,26 @@ def master_ps2(view):
     a,b = st.columns(2)
     with a:
         section_open('Segment command view','Current shape of the customer base.')
-        st.bar_chart(view['superapp_segment'].value_counts().to_frame('Customers'))
+        seg = view['superapp_segment'].value_counts().reset_index(); seg.columns=['superapp_segment','Customers']
+        st.altair_chart(bar_chart(seg,'superapp_segment','Customers',color=GRAB_GREEN), use_container_width=True)
         section_close()
         section_open('Service depth by country','How multi-service behavior differs by market.')
-        st.bar_chart(prep_bar(view,'country','services_used_count'))
+        depth = view.groupby('country', as_index=False)['services_used_count'].mean()
+        st.altair_chart(bar_chart(depth,'country','services_used_count',color=TEAL), use_container_width=True)
         section_close()
     with b:
         section_open('Cross-sell vs churn','Master relationship between growth and churn pressure.')
-        sc = view[['cross_sell_propensity','churn_risk_score','clv_12m_usd']].copy()
-        st.scatter_chart(sc, x='cross_sell_propensity', y='churn_risk_score', size='clv_12m_usd')
+        st.altair_chart(scatter_chart(view,'cross_sell_propensity','churn_risk_score',size='clv_12m_usd',color_field='customer_value_tier',palette=[GRAB_GREEN,TEAL,AMBER],tooltip=['customer_id','cross_sell_propensity','churn_risk_score','clv_12m_usd','customer_value_tier']), use_container_width=True)
         section_close()
         section_open('Top next-service routes','Most frequent next service opportunities.')
-        flow = view.groupby(['primary_service','next_best_service']).size().reset_index(name='Customers').sort_values('Customers', ascending=False)
+        flow = view.groupby(['primary_service','next_best_service'], as_index=False).size().rename(columns={'size':'Customers'}).sort_values('Customers', ascending=False)
         st.dataframe(flow.head(12), use_container_width=True, hide_index=True)
         section_close()
-
     x,y = st.columns([1.1,.9])
     with x:
         section_open('Value at risk','Higher churn pressure combined with low service depth is the key growth gap.')
-        seg = view.groupby('superapp_segment')[['services_used_count','churn_risk_score','clv_12m_usd']].mean().round(1)
-        st.bar_chart(seg)
+        seg2 = view.groupby('superapp_segment', as_index=False)[['services_used_count','churn_risk_score','clv_12m_usd']].mean().melt('superapp_segment', var_name='Metric', value_name='Value')
+        st.altair_chart(grouped_bar(seg2,'superapp_segment','Value','Metric',palette=[GRAB_GREEN,RED,TEAL]), use_container_width=True)
         section_close()
     with y:
         st.markdown(f"""
@@ -329,28 +403,32 @@ def descriptive_ps2(view):
     a,b = st.columns(2)
     with a:
         section_open('Super-app segment split','Current distribution of customer profiles.')
-        st.bar_chart(view['superapp_segment'].value_counts().to_frame('Customers'))
+        seg = view['superapp_segment'].value_counts().reset_index(); seg.columns=['superapp_segment','Customers']
+        st.altair_chart(bar_chart(seg,'superapp_segment','Customers',color=GRAB_GREEN), use_container_width=True)
         section_close()
         section_open('Primary service split','Where users currently anchor.')
-        st.bar_chart(view['primary_service'].value_counts().to_frame('Customers'))
+        pri = view['primary_service'].value_counts().reset_index(); pri.columns=['primary_service','Customers']
+        st.altair_chart(bar_chart(pri,'primary_service','Customers',color=TEAL), use_container_width=True)
         section_close()
     with b:
         section_open('Service depth distribution','How many services customers use today.')
-        depth = view['services_used_count'].value_counts().sort_index().to_frame('Customers')
-        st.bar_chart(depth)
+        depth = view['services_used_count'].value_counts().sort_index().reset_index(); depth.columns=['services_used_count','Customers']
+        st.altair_chart(bar_chart(depth,'services_used_count','Customers',color=AMBER,x_type='Q'), use_container_width=True)
         section_close()
         section_open('Customer value tier mix','Value segmentation of the current base.')
-        st.bar_chart(view['customer_value_tier'].value_counts().to_frame('Customers'))
+        vt = view['customer_value_tier'].value_counts().reset_index(); vt.columns=['customer_value_tier','Customers']
+        st.altair_chart(bar_chart(vt,'customer_value_tier','Customers',color=GRAB_GREEN_DARK), use_container_width=True)
         section_close()
-
     c,d = st.columns(2)
     with c:
         section_open('Country service depth','Average services used by market.')
-        st.bar_chart(prep_bar(view,'country','services_used_count'))
+        cs = view.groupby('country', as_index=False)['services_used_count'].mean()
+        st.altair_chart(bar_chart(cs,'country','services_used_count',color=GRAB_GREEN), use_container_width=True)
         section_close()
     with d:
         section_open('Promotion response by segment','Which segments react most to offers.')
-        st.bar_chart(prep_bar(view,'superapp_segment','promo_response_rate',pct=True))
+        promo = view.groupby('superapp_segment', as_index=False)['promo_response_rate'].mean(); promo['promo_pct']=promo['promo_response_rate']*100
+        st.altair_chart(bar_chart(promo,'superapp_segment','promo_pct',color=AMBER,y_title='Promo response %'), use_container_width=True)
         section_close()
 
 
@@ -358,26 +436,25 @@ def diagnostic_ps2(view):
     a,b = st.columns(2)
     with a:
         section_open('Recency and churn','Dormancy explains much of the churn signal.')
-        rec = view.groupby('superapp_segment')[['recency_days','churn_risk_score']].mean().round(1)
-        st.bar_chart(rec)
+        rec = view.groupby('superapp_segment', as_index=False)[['recency_days','churn_risk_score']].mean().melt('superapp_segment', var_name='Metric', value_name='Value')
+        st.altair_chart(grouped_bar(rec,'superapp_segment','Value','Metric',palette=[AMBER,RED]), use_container_width=True)
         section_close()
     with b:
         section_open('Consent and cross-sell','Valid contact rights shape who should be targeted.')
-        consent = view.groupby('pdpa_contact_ok')[['cross_sell_propensity','churn_risk_score']].mean().round(1)
-        consent.index = ['No consent','Consent'] if len(consent.index)==2 else consent.index
-        st.bar_chart(consent)
+        consent = view.groupby('pdpa_contact_ok', as_index=False)[['cross_sell_propensity','churn_risk_score']].mean()
+        consent['Consent'] = consent['pdpa_contact_ok'].map({0:'No consent',1:'Consent'})
+        cm = consent.melt('Consent', var_name='Metric', value_name='Value')
+        st.altair_chart(grouped_bar(cm,'Consent','Value','Metric',palette=[GRAB_GREEN,RED]), use_container_width=True)
         section_close()
-
     c,d = st.columns(2)
     with c:
         section_open('Value versus service depth','More service usage generally aligns with stronger value.')
-        sc = view[['services_used_count','clv_12m_usd','churn_risk_score']].copy()
-        st.scatter_chart(sc, x='services_used_count', y='clv_12m_usd', size='churn_risk_score')
+        st.altair_chart(scatter_chart(view,'services_used_count','clv_12m_usd',size='churn_risk_score',color_field='superapp_segment',tooltip=['customer_id','services_used_count','clv_12m_usd','churn_risk_score','superapp_segment']), use_container_width=True)
         section_close()
     with d:
         section_open('Segment scorecard','Where churn, cross-sell, and CLV diverge most.')
-        score = view.groupby('superapp_segment')[['cross_sell_propensity','churn_risk_score','clv_12m_usd','services_used_count']].mean().round(1)
-        st.dataframe(score, use_container_width=True)
+        score = view.groupby('superapp_segment', as_index=False)[['cross_sell_propensity','churn_risk_score','clv_12m_usd','services_used_count']].mean().round(1)
+        st.dataframe(score, use_container_width=True, hide_index=True)
         section_close()
 
 
@@ -385,21 +462,22 @@ def predictive_ps2(view):
     a,b = st.columns(2)
     with a:
         section_open('Churn risk bands','Share of users by predicted churn intensity.')
-        bands = pd.cut(view['churn_risk_score'], bins=[0,35,50,65,100], labels=['Low','Medium','High','Critical'])
-        st.bar_chart(bands.value_counts().sort_index().to_frame('Customers'))
+        bands = band_counts(view['churn_risk_score'], [0,35,50,65,100], ['Low','Medium','High','Critical'], 'Churn band')
+        st.altair_chart(bar_chart(bands,'Churn band','Customers',color=RED), use_container_width=True)
         section_close()
         section_open('Top churn candidates','Users likely to leave in the next 30 days.')
-        top = styled_top(view,['customer_id','country','superapp_segment','churn_risk_score','recency_days','services_used_count','clv_12m_usd'],15,'churn_risk_score')
+        top = top_rows(view,['customer_id','country','superapp_segment','churn_risk_score','recency_days','services_used_count','clv_12m_usd'],['churn_risk_score','recency_days'],[False,False],15)
         st.dataframe(top, use_container_width=True, hide_index=True)
         section_close()
     with b:
         section_open('Cross-sell bands','How many users are realistically ready for the next service.')
-        cb = pd.cut(view['cross_sell_propensity'], bins=[0,40,55,70,100], labels=['Low','Medium','High','Priority'])
-        st.bar_chart(cb.value_counts().sort_index().to_frame('Customers'))
+        cb = band_counts(view['cross_sell_propensity'], [0,40,55,70,100], ['Low','Medium','High','Priority'], 'Cross-sell band')
+        st.altair_chart(bar_chart(cb,'Cross-sell band','Customers',color=GRAB_GREEN), use_container_width=True)
         section_close()
         section_open('Next-best service by primary anchor','Predicted growth path from the current main service.')
-        nxt = view.groupby(['primary_service','next_best_service']).size().reset_index(name='Customers').sort_values('Customers', ascending=False)
-        st.dataframe(nxt.head(15), use_container_width=True, hide_index=True)
+        nxt = view.groupby(['primary_service','next_best_service'], as_index=False).size().rename(columns={'size':'Customers'}).sort_values('Customers', ascending=False)
+        heat = nxt.copy(); heat['pair'] = heat['Customers']
+        st.altair_chart(heatmap_chart(heat,'primary_service','next_best_service','pair',scheme='tealblues'), use_container_width=True)
         section_close()
 
 
@@ -416,12 +494,12 @@ def prescriptive_ps2(view):
         """, unsafe_allow_html=True)
     with b:
         section_open('Action queue','Who should be targeted first and why.')
-        q = styled_top(view,['customer_id','country','superapp_segment','next_best_service','cross_sell_propensity','churn_risk_score','recommended_action','clv_12m_usd'],15,['cross_sell_propensity','clv_12m_usd'])
+        q = top_rows(view,['customer_id','country','superapp_segment','next_best_service','cross_sell_propensity','churn_risk_score','recommended_action','clv_12m_usd'],['cross_sell_propensity','clv_12m_usd'],[False,False],15)
         st.dataframe(q, use_container_width=True, hide_index=True)
         section_close()
         section_open('Action value by segment','Where the most recoverable or expandable value sits.')
-        act = view.groupby('superapp_segment')[['clv_12m_usd','cross_sell_propensity','churn_risk_score']].mean().round(1)
-        st.bar_chart(act)
+        act = view.groupby('superapp_segment', as_index=False)[['clv_12m_usd','cross_sell_propensity','churn_risk_score']].mean().melt('superapp_segment', var_name='Metric', value_name='Value')
+        st.altair_chart(grouped_bar(act,'superapp_segment','Value','Metric',palette=[TEAL,GRAB_GREEN,RED]), use_container_width=True)
         section_close()
 
 
@@ -436,26 +514,26 @@ def master_ps3(view):
     a,b = st.columns(2)
     with a:
         section_open('Fairness by segment','Master view of who experiences pricing strain.')
-        st.bar_chart(prep_bar(view,'price_sensitivity_segment','fare_fairness_score'))
+        fair = view.groupby('price_sensitivity_segment', as_index=False)['fare_fairness_score'].mean()
+        st.altair_chart(bar_chart(fair,'price_sensitivity_segment','fare_fairness_score',color=GRAB_GREEN), use_container_width=True)
         section_close()
         section_open('Surge by country','Current pricing intensity by market.')
-        st.bar_chart(prep_bar(view,'country','avg_surge_multiplier'))
+        sur = view.groupby('country', as_index=False)['avg_surge_multiplier'].mean()
+        st.altair_chart(bar_chart(sur,'country','avg_surge_multiplier',color=AMBER), use_container_width=True)
         section_close()
     with b:
         section_open('Shock versus fairness','Pricing trust weakens as shock and anomaly exposure rise.')
-        sc = view[['avg_surge_multiplier','fare_fairness_score','abnormal_charge_flags_90d']].copy()
-        st.scatter_chart(sc, x='avg_surge_multiplier', y='fare_fairness_score', size='abnormal_charge_flags_90d')
+        st.altair_chart(scatter_chart(view,'avg_surge_multiplier','fare_fairness_score',size='abnormal_charge_flags_90d',color_field='price_sensitivity_segment',palette=[RED,AMBER,GRAB_GREEN],tooltip=['customer_id','avg_surge_multiplier','fare_fairness_score','abnormal_charge_flags_90d','price_sensitivity_segment']), use_container_width=True)
         section_close()
         section_open('Pricing review queue','Users most likely to feel overcharged or churn after a shock.')
-        q = styled_top(view,['customer_id','country','price_sensitivity_segment','avg_surge_multiplier','abnormal_charge_flags_90d','fare_fairness_score','churn_risk_score'],12,['abnormal_charge_flags_90d','churn_risk_score'])
+        q = top_rows(view,['customer_id','country','price_sensitivity_segment','avg_surge_multiplier','abnormal_charge_flags_90d','fare_fairness_score','churn_risk_score'],['abnormal_charge_flags_90d','churn_risk_score'],[False,False],12)
         st.dataframe(q, use_container_width=True, hide_index=True)
         section_close()
-
     x,y = st.columns([1.1,.9])
     with x:
         section_open('Policy comparison','Sensitivity segment, elasticity, and recommended cap together.')
-        policy = view.groupby('price_sensitivity_segment')[['avg_surge_multiplier','price_elasticity_score','surge_cap_recommendation','fare_fairness_score']].mean().round(2)
-        st.bar_chart(policy)
+        policy = view.groupby('price_sensitivity_segment', as_index=False)[['avg_surge_multiplier','price_elasticity_score','surge_cap_recommendation','fare_fairness_score']].mean().melt('price_sensitivity_segment', var_name='Metric', value_name='Value')
+        st.altair_chart(grouped_bar(policy,'price_sensitivity_segment','Value','Metric',palette=[AMBER,RED,TEAL,GRAB_GREEN]), use_container_width=True)
         section_close()
     with y:
         st.markdown(f"""
@@ -469,53 +547,58 @@ def descriptive_ps3(view):
     a,b = st.columns(2)
     with a:
         section_open('Price sensitivity mix','Current customer split by price sensitivity.')
-        st.bar_chart(view['price_sensitivity_segment'].value_counts().to_frame('Customers'))
+        ps = view['price_sensitivity_segment'].value_counts().reset_index(); ps.columns=['price_sensitivity_segment','Customers']
+        st.altair_chart(bar_chart(ps,'price_sensitivity_segment','Customers',color=AMBER), use_container_width=True)
         section_close()
         section_open('Waiting fee burden','Average waiting-fee count by country.')
-        st.bar_chart(prep_bar(view,'country','waiting_fee_count_90d'))
+        wf = view.groupby('country', as_index=False)['waiting_fee_count_90d'].mean()
+        st.altair_chart(bar_chart(wf,'country','waiting_fee_count_90d',color=RED), use_container_width=True)
         section_close()
     with b:
         section_open('Fairness by country','Market-level perception of pricing fairness.')
-        st.bar_chart(prep_bar(view,'country','fare_fairness_score'))
+        ff = view.groupby('country', as_index=False)['fare_fairness_score'].mean()
+        st.altair_chart(bar_chart(ff,'country','fare_fairness_score',color=GRAB_GREEN), use_container_width=True)
         section_close()
         section_open('Abnormal charges by segment','Where charge anomalies cluster.')
-        st.bar_chart(prep_bar(view,'price_sensitivity_segment','abnormal_charge_flags_90d'))
+        ab = view.groupby('price_sensitivity_segment', as_index=False)['abnormal_charge_flags_90d'].mean()
+        st.altair_chart(bar_chart(ab,'price_sensitivity_segment','abnormal_charge_flags_90d',color=TEAL), use_container_width=True)
         section_close()
-
     c,d = st.columns(2)
     with c:
         section_open('Surge intensity distribution','Current pricing pressure across user segments.')
-        st.bar_chart(prep_bar(view,'price_sensitivity_segment','avg_surge_multiplier'))
+        su = view.groupby('price_sensitivity_segment', as_index=False)['avg_surge_multiplier'].mean()
+        st.altair_chart(bar_chart(su,'price_sensitivity_segment','avg_surge_multiplier',color=AMBER), use_container_width=True)
         section_close()
     with d:
         section_open('Refund recovery by segment','Where proactive recovery is currently concentrated.')
-        st.bar_chart(prep_bar(view,'price_sensitivity_segment','proactive_refund_rate',pct=True))
+        rr = view.groupby('price_sensitivity_segment', as_index=False)['proactive_refund_rate'].mean(); rr['refund_pct']=rr['proactive_refund_rate']*100
+        st.altair_chart(bar_chart(rr,'price_sensitivity_segment','refund_pct',color=GRAB_GREEN_DARK,y_title='Refund %'), use_container_width=True)
         section_close()
 
 
 def diagnostic_ps3(view):
     a,b = st.columns(2)
     with a:
-        section_open('Shock drivers','Surge, hidden fees, and anomalies jointly reduce fairness.')
-        diag = view[['avg_surge_multiplier','waiting_fee_count_90d','abnormal_charge_flags_90d','fare_fairness_score']].corr().round(2)
-        st.dataframe(diag, use_container_width=True)
+        section_open('Correlation view','Surge, hidden fees, and anomalies jointly reduce fairness.')
+        corr = view[['avg_surge_multiplier','waiting_fee_count_90d','abnormal_charge_flags_90d','fare_fairness_score','churn_risk_score']].corr().reset_index().melt('index', var_name='metric_2', value_name='correlation')
+        corr = corr.rename(columns={'index':'metric_1'})
+        st.altair_chart(heatmap_chart(corr,'metric_1','metric_2','correlation',scheme='redyellowgreen'), use_container_width=True)
         section_close()
     with b:
         section_open('Elasticity by segment','Demand response changes by customer sensitivity.')
-        st.bar_chart(prep_bar(view,'price_sensitivity_segment','price_elasticity_score'))
+        el = view.groupby('price_sensitivity_segment', as_index=False)['price_elasticity_score'].mean()
+        st.altair_chart(bar_chart(el,'price_sensitivity_segment','price_elasticity_score',color=RED), use_container_width=True)
         section_close()
-
     c,d = st.columns(2)
     with c:
         section_open('Fairness versus churn','Lower fairness tends to align with higher churn pressure.')
-        sc = view[['fare_fairness_score','churn_risk_score','avg_surge_multiplier']].copy()
-        st.scatter_chart(sc, x='fare_fairness_score', y='churn_risk_score', size='avg_surge_multiplier')
+        st.altair_chart(scatter_chart(view,'fare_fairness_score','churn_risk_score',size='avg_surge_multiplier',color_field='price_sensitivity_segment',palette=[RED,AMBER,GRAB_GREEN],tooltip=['customer_id','fare_fairness_score','churn_risk_score','avg_surge_multiplier','price_sensitivity_segment']), use_container_width=True)
         section_close()
     with d:
         section_open('Abnormal charge impact','Users with repeated flags see materially weaker fairness.')
-        bins = pd.cut(view['abnormal_charge_flags_90d'], bins=[-1,0,2,4,20], labels=['None','Low','Medium','High'])
-        grp = view.groupby(bins)[['fare_fairness_score','churn_risk_score']].mean().round(1)
-        st.bar_chart(grp)
+        tmp = view.copy(); tmp['flag_band'] = pd.cut(tmp['abnormal_charge_flags_90d'], bins=[-1,0,2,4,20], labels=['None','Low','Medium','High'])
+        grp = tmp.groupby('flag_band', as_index=False)[['fare_fairness_score','churn_risk_score']].mean().melt('flag_band', var_name='Metric', value_name='Value')
+        st.altair_chart(grouped_bar(grp,'flag_band','Value','Metric',palette=[GRAB_GREEN,RED]), use_container_width=True)
         section_close()
 
 
@@ -523,22 +606,24 @@ def predictive_ps3(view):
     a,b = st.columns(2)
     with a:
         section_open('Fairness risk bands','How many users fall into weak pricing-trust conditions.')
-        bands = pd.cut(view['fare_fairness_score'], bins=[0,45,60,75,100], labels=['Critical','High risk','Watch','Healthy'])
-        st.bar_chart(bands.value_counts().sort_index().to_frame('Customers'))
+        bands = band_counts(view['fare_fairness_score'], [0,45,60,75,100], ['Critical','High risk','Watch','Healthy'], 'Fairness band')
+        st.altair_chart(bar_chart(bands,'Fairness band','Customers',color=RED), use_container_width=True)
         section_close()
         section_open('Pricing risk candidates','Users most likely to react negatively to pricing shock.')
-        top = styled_top(view,['customer_id','country','price_sensitivity_segment','avg_surge_multiplier','abnormal_charge_flags_90d','fare_fairness_score','churn_risk_score'],15,['fare_fairness_score','churn_risk_score'],asc=[True,False] if False else False)
-        top = view[['customer_id','country','price_sensitivity_segment','avg_surge_multiplier','abnormal_charge_flags_90d','fare_fairness_score','churn_risk_score']].sort_values(['fare_fairness_score','churn_risk_score'], ascending=[True,False]).head(15)
+        top = top_rows(view,['customer_id','country','price_sensitivity_segment','avg_surge_multiplier','abnormal_charge_flags_90d','fare_fairness_score','churn_risk_score'],['fare_fairness_score','churn_risk_score'],[True,False],15)
         st.dataframe(top, use_container_width=True, hide_index=True)
         section_close()
     with b:
         section_open('Cap recommendation by segment','Predicted pricing guardrails from elasticity and fairness signals.')
-        cap = view.groupby('price_sensitivity_segment')[['surge_cap_recommendation','avg_surge_multiplier','churn_risk_score']].mean().round(2)
-        st.line_chart(cap)
+        cap = view.groupby('price_sensitivity_segment', as_index=False)[['surge_cap_recommendation','avg_surge_multiplier','churn_risk_score']].mean().melt('price_sensitivity_segment', var_name='Metric', value_name='Value')
+        st.altair_chart(grouped_bar(cap,'price_sensitivity_segment','Value','Metric',palette=[GRAB_GREEN,AMBER,RED]), use_container_width=True)
         section_close()
         section_open('Exposure ladder','How extreme surge exposure escalates by segment.')
-        ex = view.groupby('price_sensitivity_segment')[['extreme_surge_exposure_rate','proactive_refund_rate']].mean().mul(100).round(1)
-        st.bar_chart(ex)
+        ex = view.groupby('price_sensitivity_segment', as_index=False)[['extreme_surge_exposure_rate','proactive_refund_rate']].mean()
+        ex['extreme_surge_pct'] = ex['extreme_surge_exposure_rate']*100
+        ex['refund_pct'] = ex['proactive_refund_rate']*100
+        em = ex[['price_sensitivity_segment','extreme_surge_pct','refund_pct']].melt('price_sensitivity_segment', var_name='Metric', value_name='Value')
+        st.altair_chart(grouped_bar(em,'price_sensitivity_segment','Value','Metric',palette=[AMBER,GRAB_GREEN]), use_container_width=True)
         section_close()
 
 
@@ -555,12 +640,12 @@ def prescriptive_ps3(view):
         """, unsafe_allow_html=True)
     with b:
         section_open('Pricing action queue','Who requires intervention first.')
-        q = view[['customer_id','country','price_sensitivity_segment','avg_surge_multiplier','abnormal_charge_flags_90d','surge_cap_recommendation','recommended_action']].sort_values(['abnormal_charge_flags_90d','avg_surge_multiplier'], ascending=[False,False]).head(15)
+        q = top_rows(view,['customer_id','country','price_sensitivity_segment','avg_surge_multiplier','abnormal_charge_flags_90d','surge_cap_recommendation','recommended_action'],['abnormal_charge_flags_90d','avg_surge_multiplier'],[False,False],15)
         st.dataframe(q, use_container_width=True, hide_index=True)
         section_close()
         section_open('Policy value view','Where fairness recovery protects the most value.')
-        pol = view.groupby('price_sensitivity_segment')[['clv_12m_usd','fare_fairness_score','churn_risk_score']].mean().round(1)
-        st.bar_chart(pol)
+        pol = view.groupby('price_sensitivity_segment', as_index=False)[['clv_12m_usd','fare_fairness_score','churn_risk_score']].mean().melt('price_sensitivity_segment', var_name='Metric', value_name='Value')
+        st.altair_chart(grouped_bar(pol,'price_sensitivity_segment','Value','Metric',palette=[TEAL,GRAB_GREEN,RED]), use_container_width=True)
         section_close()
 
 
