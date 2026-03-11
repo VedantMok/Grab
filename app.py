@@ -1,4 +1,5 @@
 from pathlib import Path
+import time
 import pandas as pd
 import numpy as np
 import altair as alt
@@ -399,21 +400,40 @@ def render_phone(screen_html):
     """, unsafe_allow_html=True)
 
 
-def phone_state_buttons(key):
-    if key not in st.session_state:
-        st.session_state[key] = 'current'
-    c1, c2 = st.columns(2)
-    cur_label = '● Current experience' if st.session_state[key] == 'current' else 'Current experience'
-    imp_label = '● Improved experience' if st.session_state[key] == 'improved' else 'Improved experience'
+
+
+def phone_demo_controls(state_key, auto_key, interval=2.8):
+    if state_key not in st.session_state:
+        st.session_state[state_key] = 'current'
+    if auto_key not in st.session_state:
+        st.session_state[auto_key] = True
+    c1, c2, c3 = st.columns([1, 1, 1.1])
+    cur_label = '● Current' if st.session_state[state_key] == 'current' else 'Current'
+    imp_label = '● Best case' if st.session_state[state_key] == 'improved' else 'Best case'
+    loop_label = 'Pause live demo' if st.session_state[auto_key] else 'Start live demo'
     with c1:
-        if st.button(cur_label, key=f'{key}_current', use_container_width=True):
-            st.session_state[key] = 'current'
+        if st.button(cur_label, key=f'{state_key}_current', use_container_width=True):
+            st.session_state[state_key] = 'current'
+            st.session_state[auto_key] = False
             st.rerun()
     with c2:
-        if st.button(imp_label, key=f'{key}_improved', use_container_width=True):
-            st.session_state[key] = 'improved'
+        if st.button(imp_label, key=f'{state_key}_improved', use_container_width=True):
+            st.session_state[state_key] = 'improved'
+            st.session_state[auto_key] = False
             st.rerun()
-    return st.session_state[key]
+    with c3:
+        if st.button(loop_label, key=f'{state_key}_loop', use_container_width=True):
+            st.session_state[auto_key] = not st.session_state[auto_key]
+            st.rerun()
+    return st.session_state[state_key], st.session_state[auto_key]
+
+
+def autoplay_demo(state_key, auto_key, interval=2.8):
+    if st.session_state.get(auto_key, False):
+        st.caption(f'Live demo mode is on. The app story flips every {interval:.1f} seconds and keeps the impact narrative in sync.')
+        time.sleep(interval)
+        st.session_state[state_key] = 'improved' if st.session_state.get(state_key, 'current') == 'current' else 'current'
+        st.rerun()
 
 
 
@@ -503,11 +523,15 @@ def master_ps1(view):
     with demo_left:
         section_open('Customer app demo','Switch the phone below to show the broken ride-booking journey versus the best-case customer experience after the recommended fix.')
         render_phone(problem_screen if state == 'current' else improved_screen)
-        phone_state_buttons('ps1_demo_state')
+        state, autoplay = phone_demo_controls('ps1_demo_state', 'ps1_demo_auto', interval=3.0)
         section_close()
 
     with demo_right:
         section_open('Best-case scenario','The improved phone state is wired to the prescriptive action: reliable-driver override, tighter zone incentives, and service recovery.')
+        if state == 'current':
+            st.markdown("<div class='action-box amber'><h4>Live view: current customer pain</h4><p>The customer is still facing uncertain dispatch, wider ETA misses, and weak recovery reassurance inside the booking flow.</p></div>", unsafe_allow_html=True)
+        else:
+            st.markdown("<div class='action-box green'><h4>Live view: best-case experience</h4><p>The customer now sees a stable driver match, believable ETA, and built-in service recovery that restores trust before checkout.</p></div>", unsafe_allow_html=True)
         impact_card('Bad booking rate', current_bad, improved_bad, 'Lower broken-booking exposure after safe matching and stricter dispatch.', higher_is_better=False, suffix='%')
         impact_card('ETA gap', current_eta, improved_eta, 'Promised versus actual arrival narrows when supply and dispatch are corrected.', higher_is_better=False, suffix=' min')
         impact_card('Trust score', current_trust, improved_trust, 'Stable assignment and recovery messaging rebuild confidence at the decision moment.', suffix='')
@@ -550,6 +574,8 @@ def master_ps1(view):
         <div class='action-box amber'><h4>Operations priority</h4><p>Send targeted incentives into low-supply rush-hour zones.</p><p>Why supply imbalance is driving avoidable delay and cancellation exposure.</p></div>
         <div class='action-box red'><h4>Control priority</h4><p>Escalate High-Risk driver tier for warning, reduced visibility, or review.</p><p>Why complaints and failure rates are already elevated.</p></div>
         """, unsafe_allow_html=True)
+
+    autoplay_demo('ps1_demo_state', 'ps1_demo_auto', interval=3.0)
 
 
 def descriptive_ps1(view):
@@ -747,10 +773,14 @@ def master_ps2(view):
     with demo_left:
         section_open('Customer app demo','See how a generic home feed keeps customers single-service, then switch to the improved Grab app experience powered by your prescriptive logic.')
         render_phone(problem_screen if state == 'current' else improved_screen)
-        phone_state_buttons('ps2_demo_state')
+        state, autoplay = phone_demo_controls('ps2_demo_state', 'ps2_demo_auto', interval=3.0)
         section_close()
     with demo_right:
         section_open('Best-case scenario','The improved home screen uses consent-safe next-best-service targeting, fading-user rescue, and power-user protection.')
+        if state == 'current':
+            st.markdown("<div class='action-box amber'><h4>Live view: current customer pain</h4><p>The home screen is still generic, so the customer sees weak discovery and has little reason to form a second Grab habit.</p></div>", unsafe_allow_html=True)
+        else:
+            st.markdown("<div class='action-box green'><h4>Live view: best-case experience</h4><p>The home screen now behaves like a personalised assistant, surfacing the most relevant next service instead of a generic promotion.</p></div>", unsafe_allow_html=True)
         impact_card('Single-service share', single_share, improved_single, 'Lower dependency means stronger ecosystem behavior.', higher_is_better=False, suffix='%')
         impact_card('Cross-sell propensity', crosssell, improved_cross, 'Personalised offers raise the chance of the next service being adopted.', suffix='')
         impact_card('Churn risk', churn, improved_churn, 'Better relevance and more depth reduce the likelihood of drop-off.', higher_is_better=False, suffix='')
@@ -792,6 +822,8 @@ def master_ps2(view):
         <div class='action-box amber'><h4>Retention priority</h4><p>Re-activate fading single-service users before inactivity hardens into churn.</p><p>Why recency and narrow usage are early warning signs.</p></div>
         <div class='action-box red'><h4>Value protection</h4><p>Protect power users with bundles and priority support.</p><p>Why they carry the strongest lifetime value and ecosystem habit.</p></div>
         """, unsafe_allow_html=True)
+
+    autoplay_demo('ps2_demo_state', 'ps2_demo_auto', interval=3.0)
 
 
 def descriptive_ps2(view):
@@ -980,10 +1012,14 @@ def master_ps3(view):
     with demo_left:
         section_open('Customer app demo','Switch the phone below to show the pricing-shock moment versus the improved transparent checkout powered by your prescriptive policy.')
         render_phone(problem_screen if state == 'current' else improved_screen)
-        phone_state_buttons('ps3_demo_state')
+        state, autoplay = phone_demo_controls('ps3_demo_state', 'ps3_demo_auto', interval=3.0)
         section_close()
     with demo_right:
         section_open('Best-case scenario','The improved fare screen uses surge-cap enforcement, abnormal-charge recovery, and clearer service assurance.')
+        if state == 'current':
+            st.markdown("<div class='action-box amber'><h4>Live view: current customer pain</h4><p>The customer still sees price shock, weak fee clarity, and limited confidence that Grab will resolve abnormal charges quickly.</p></div>", unsafe_allow_html=True)
+        else:
+            st.markdown("<div class='action-box green'><h4>Live view: best-case experience</h4><p>The checkout now explains the fare, caps the shock for sensitive users, and shows clear protection if the final charge looks wrong.</p></div>", unsafe_allow_html=True)
         impact_card('Avg surge', surge, improved_surge, 'Visible pricing pressure falls when the guardrail is applied.', higher_is_better=False, suffix='x', decimals=2)
         impact_card('Fairness score', fairness, improved_fairness, 'Clear fare explanation and recovery support improve trust in the price.', suffix='')
         impact_card('Abnormal charge flags', abnormal, improved_abnormal, 'Proactive review lowers the number of customers who feel overcharged.', higher_is_better=False, suffix='')
@@ -1025,6 +1061,8 @@ def master_ps3(view):
         <div class='action-box amber'><h4>Recovery rule</h4><p>Trigger proactive refund review for repeated abnormal charge flags.</p><p>Why this reduces reputational and regulatory exposure.</p></div>
         <div class='action-box red'><h4>Premium logic</h4><p>Allow higher surge only where convenience-first segments receive service assurance.</p><p>Why higher price without reliability becomes hard to defend.</p></div>
         """, unsafe_allow_html=True)
+
+    autoplay_demo('ps3_demo_state', 'ps3_demo_auto', interval=3.0)
 
 
 def descriptive_ps3(view):
