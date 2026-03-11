@@ -1,9 +1,10 @@
 from pathlib import Path
-import time
 import pandas as pd
 import numpy as np
 import altair as alt
+import json
 import streamlit as st
+import streamlit.components.v1 as components
 
 st.set_page_config(page_title="Grab Executive Dashboard", page_icon="🟢", layout="wide", initial_sidebar_state="collapsed")
 BASE_DIR = Path(__file__).resolve().parent
@@ -341,6 +342,201 @@ def top_rows(df, cols, sort_cols, ascending, n=12):
 
 
 
+
+def render_story_demo(key, payload, height=820):
+    metrics_html = ''.join(
+        f"<div class='story-metric'><span>{m['label']}</span><strong data-current={json.dumps(m['current'])} data-improved={json.dumps(m['improved'])}>{m['current']}</strong><small data-current={json.dumps(m['current_note'])} data-improved={json.dumps(m['improved_note'])}>{m['current_note']}</small></div>"
+        for m in payload['metrics']
+    )
+    payload_js = json.dumps({
+        'current_title': payload['current_title'],
+        'improved_title': payload['improved_title'],
+        'current_text': payload['current_text'],
+        'improved_text': payload['improved_text'],
+        'current_status': payload['current_status'],
+        'improved_status': payload['improved_status'],
+        'interval_ms': payload.get('interval_ms', 3200),
+    })
+    html = f"""
+    <html>
+    <head>
+    <meta name='viewport' content='width=device-width, initial-scale=1' />
+    <style>
+    * {{ box-sizing: border-box; font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif; }}
+    body {{ margin: 0; background: transparent; }}
+    .story-shell {{ background: linear-gradient(180deg, #FCFFFD 0%, #F3FBF6 100%); border: 1px solid #DCEEE3; border-radius: 24px; padding: 16px; box-shadow: 0 10px 24px rgba(0,0,0,.04); }}
+    .story-grid {{ display: grid; grid-template-columns: 392px 1fr; gap: 18px; align-items: start; }}
+    .phone-shell {{ width: 372px; max-width: 100%; margin: 0 auto; background: #0B1115; border-radius: 42px; padding: 10px; box-shadow: 0 26px 60px rgba(20,53,36,.18), 0 6px 16px rgba(0,0,0,.12); }}
+    .phone-notch {{ width: 124px; height: 30px; background: #0B1115; border-radius: 0 0 18px 18px; margin: 0 auto 6px auto; }}
+    .phone-body {{ background: #F6FBF8; border-radius: 32px; overflow: hidden; min-height: 690px; position: relative; }}
+    .screen {{ position: absolute; inset: 0; opacity: 0; transform: translateX(22px) scale(.986); transition: opacity .75s cubic-bezier(.22,1,.36,1), transform .75s cubic-bezier(.22,1,.36,1); }}
+    .screen.active {{ opacity: 1; transform: translateX(0) scale(1); }}
+    .story-panel {{ background: #FFFFFF; border: 1px solid #DCEEE3; border-radius: 20px; padding: 16px; min-height: 710px; box-shadow: 0 8px 18px rgba(0,0,0,.03); display:flex; flex-direction:column; }}
+    .story-top {{ display:flex; justify-content:space-between; align-items:center; gap: 10px; }}
+    .story-kicker {{ color:#607A6A; font-size:.74rem; text-transform:uppercase; letter-spacing:.08em; }}
+    .story-live {{ color:#0B6B3A; background:#EAF8F0; border:1px solid #CDEED9; border-radius:999px; padding:.32rem .65rem; font-size:.68rem; font-weight:800; }}
+    .story-live.paused {{ color:#6A8375; background:#F3F7F5; border-color:#E1ECE6; }}
+    .story-title {{ color:#143524; font-weight:800; font-size:1.16rem; margin-top:.55rem; }}
+    .story-text {{ color:#5C7667; font-size:.85rem; line-height:1.62; margin-top:.35rem; min-height:88px; }}
+    .story-status {{ margin-top:.8rem; border-radius:16px; padding:.82rem .9rem; font-size:.81rem; font-weight:700; transition: all .45s ease; }}
+    .story-status.current {{ background:#FFF6E8; color:#9A5F00; border:1px solid #F8E1BA; }}
+    .story-status.improved {{ background:#EAF8F0; color:#0B6B3A; border:1px solid #CDEED9; }}
+    .story-progress {{ width:100%; height:6px; background:#EDF4F0; border-radius:999px; overflow:hidden; margin-top:.75rem; }}
+    .story-progress-bar {{ width:100%; height:100%; transform-origin:left center; background:linear-gradient(90deg,#00B14F 0%, #54D98B 100%); animation: storyProgress linear infinite; }}
+    .story-progress-bar.paused {{ animation-play-state: paused; }}
+    .story-dots {{ display:flex; gap:.35rem; margin-top:.6rem; }}
+    .story-dot {{ width:8px; height:8px; border-radius:999px; background:#D1E4D9; transition:all .35s ease; }}
+    .story-dot.active {{ width:20px; background:#00B14F; }}
+    .story-metrics {{ display:grid; grid-template-columns:1fr; gap:.72rem; margin-top:.95rem; }}
+    .story-metric {{ background:#F8FCFA; border:1px solid #E3F1E9; border-radius:16px; padding:.82rem .9rem; transition: transform .35s ease, box-shadow .35s ease, border-color .35s ease; }}
+    .story-metric.active {{ transform: translateY(-2px); box-shadow: 0 8px 18px rgba(0,177,79,.08); border-color:#BFE7CF; }}
+    .story-metric span {{ display:block; color:#607A6A; font-size:.72rem; text-transform:uppercase; letter-spacing:.06em; }}
+    .story-metric strong {{ display:block; color:#143524; font-size:1.16rem; margin-top:.23rem; transition: opacity .25s ease; }}
+    .story-metric small {{ display:block; color:#6A8375; margin-top:.22rem; font-size:.74rem; line-height:1.45; transition: opacity .25s ease; }}
+    .story-actions {{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:.55rem; margin-top:auto; padding-top:1rem; }}
+    .story-btn {{ border:none; border-radius:14px; padding:.82rem .85rem; font-weight:800; cursor:pointer; transition:all .25s ease; }}
+    .story-btn.secondary {{ background:#EFF5F1; color:#244334; }}
+    .story-btn.primary {{ background:#00B14F; color:#FFFFFF; box-shadow:0 10px 18px rgba(0,177,79,.18); }}
+    .story-btn.ghost {{ background:#FFFFFF; color:#244334; border:1px solid #DCEEE3; }}
+    .story-btn:hover {{ transform: translateY(-1px); }}
+    .story-btn:active {{ transform: translateY(0); }}
+    .phone-status {{ display:flex; justify-content:space-between; align-items:center; padding:.45rem .95rem .1rem .95rem; color:#173B2A; font-size:.72rem; font-weight:700; }}
+    .phone-header {{ padding:.55rem 1rem .85rem 1rem; background:linear-gradient(180deg, #EEFBF3 0%, #F7FBF8 100%); }}
+    .phone-brand {{ color:#00B14F; font-weight:900; letter-spacing:.02em; font-size:1rem; }}
+    .phone-screen-title {{ margin-top:.18rem; color:#143524; font-size:1.1rem; font-weight:800; }}
+    .phone-subtitle {{ margin-top:.15rem; color:#5D7768; font-size:.78rem; }}
+    .phone-map {{ margin:.85rem 1rem .85rem 1rem; border-radius:22px; padding:.95rem; min-height:120px; background:linear-gradient(135deg, #D7F7E4 0%, #EFFAF4 55%, #FFFFFF 100%); border:1px solid #DCEEE3; }}
+    .phone-route {{ display:inline-block; background:rgba(255,255,255,.9); border:1px solid #DCEEE3; border-radius:16px; padding:.7rem .85rem; color:#143524; box-shadow:0 6px 14px rgba(0,0,0,.04); }}
+    .phone-route span {{ display:block; color:#6A8375; font-size:.72rem; margin-bottom:.18rem; }}
+    .phone-route strong {{ font-size:.9rem; }}
+    .phone-panel {{ background:#FFFFFF; margin:0 1rem .78rem 1rem; border:1px solid #DCEEE3; border-radius:20px; padding:.92rem .95rem; box-shadow:0 8px 18px rgba(0,0,0,.04); }}
+    .phone-panel.soft {{ background:#F8FCFA; }}
+    .phone-row {{ display:flex; justify-content:space-between; align-items:center; gap:.7rem; color:#143524; font-weight:700; font-size:.86rem; }}
+    .phone-copy {{ color:#5E7868; font-size:.78rem; line-height:1.5; margin-top:.45rem; }}
+    .phone-banner {{ border-radius:14px; padding:.68rem .78rem; font-size:.76rem; font-weight:700; margin-top:.75rem; }}
+    .phone-banner.warn {{ background:#FFF6E8; color:#9A5F00; border:1px solid #F8E1BA; }}
+    .phone-banner.success {{ background:#EAF8F0; color:#0B6B3A; border:1px solid #CDEED9; }}
+    .phone-chip {{ display:inline-block; padding:.28rem .58rem; border-radius:999px; font-size:.67rem; font-weight:800; letter-spacing:.01em; }}
+    .phone-chip.neutral {{ color:#476555; background:#EEF5F1; border:1px solid #DFECE5; }}
+    .phone-chip.warn {{ color:#9A5F00; background:#FFF6E8; border:1px solid #F8E1BA; }}
+    .phone-chip.success {{ color:#0B6B3A; background:#EAF8F0; border:1px solid #CDEED9; }}
+    .phone-chip.danger {{ color:#B02C31; background:#FFF0F0; border:1px solid #F7D5D7; }}
+    .phone-price {{ color:#143524; font-size:1.2rem; font-weight:900; }}
+    .phone-mini-kpis {{ display:grid; grid-template-columns:1fr 1fr; gap:.6rem; margin-top:.8rem; }}
+    .phone-kpi {{ background:#F8FCFA; border:1px solid #E3F1E9; border-radius:16px; padding:.68rem .72rem; }}
+    .phone-kpi span {{ display:block; color:#6A8375; font-size:.68rem; margin-bottom:.18rem; }}
+    .phone-kpi strong {{ color:#143524; font-size:.95rem; }}
+    .phone-cta {{ margin:.2rem 1rem 1rem 1rem; background:#00B14F; color:#FFFFFF; text-align:center; border-radius:16px; padding:.88rem 1rem; font-size:.88rem; font-weight:800; box-shadow:0 10px 18px rgba(0,177,79,.18); }}
+    .phone-cta.muted {{ background:#DFF2E7; color:#0B6B3A; box-shadow:none; }}
+    .phone-service-grid {{ display:grid; grid-template-columns:repeat(4, 1fr); gap:.55rem; margin-top:.78rem; }}
+    .phone-service {{ background:#F8FCFA; border:1px solid #E3F1E9; border-radius:16px; padding:.65rem .2rem; text-align:center; color:#143524; font-size:.72rem; font-weight:800; }}
+    .phone-service.active {{ background:linear-gradient(180deg, #EAF8F0 0%, #F4FBF7 100%); border-color:#BFE7CF; color:#0B6B3A; }}
+    .phone-offer {{ margin-top:.7rem; background:linear-gradient(135deg, #143524 0%, #0B6B3A 100%); color:#FFFFFF; border-radius:18px; padding:.9rem .95rem; }}
+    .phone-offer small {{ display:block; opacity:.78; margin-bottom:.22rem; }}
+    .phone-offer strong {{ display:block; font-size:1rem; margin-bottom:.22rem; }}
+    .phone-fare-line {{ display:flex; justify-content:space-between; align-items:center; color:#143524; font-size:.78rem; padding:.36rem 0; border-bottom:1px dashed #E3EEE8; }}
+    .phone-fare-line:last-child {{ border-bottom:none; }}
+    @keyframes storyProgress {{ from {{ transform: scaleX(0); }} to {{ transform: scaleX(1); }} }}
+    @media (max-width: 920px) {{ .story-grid {{ grid-template-columns: 1fr; }} .story-panel {{ min-height: auto; }} }}
+    </style>
+    </head>
+    <body>
+    <div class='story-shell' id='{key}_root'>
+      <div class='story-grid'>
+        <div>
+          <div class='phone-shell'>
+            <div class='phone-notch'></div>
+            <div class='phone-body'>
+              <div class='screen active' id='{key}_screen_current'>{payload['current_screen']}</div>
+              <div class='screen' id='{key}_screen_improved'>{payload['improved_screen']}</div>
+            </div>
+          </div>
+        </div>
+        <div class='story-panel'>
+          <div class='story-top'>
+            <div class='story-kicker'>{payload['kicker']}</div>
+            <div class='story-live' id='{key}_live'>Live story</div>
+          </div>
+          <div class='story-title' id='{key}_title'>{payload['current_title']}</div>
+          <div class='story-text' id='{key}_text'>{payload['current_text']}</div>
+          <div class='story-status current' id='{key}_status'>{payload['current_status']}</div>
+          <div class='story-progress'><div class='story-progress-bar' id='{key}_progress'></div></div>
+          <div class='story-dots'><div class='story-dot active' id='{key}_dot_current'></div><div class='story-dot' id='{key}_dot_improved'></div></div>
+          <div class='story-metrics'>{metrics_html}</div>
+          <div class='story-actions'>
+            <button class='story-btn secondary' id='{key}_btn_current'>Current state</button>
+            <button class='story-btn primary' id='{key}_btn_improved'>Best case</button>
+            <button class='story-btn ghost' id='{key}_btn_loop'>Pause</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+    const data = {payload_js};
+    const root = document.getElementById('{key}_root');
+    const currentScreen = document.getElementById('{key}_screen_current');
+    const improvedScreen = document.getElementById('{key}_screen_improved');
+    const titleEl = document.getElementById('{key}_title');
+    const textEl = document.getElementById('{key}_text');
+    const statusEl = document.getElementById('{key}_status');
+    const liveEl = document.getElementById('{key}_live');
+    const progressEl = document.getElementById('{key}_progress');
+    const dotCurrent = document.getElementById('{key}_dot_current');
+    const dotImproved = document.getElementById('{key}_dot_improved');
+    const btnCurrent = document.getElementById('{key}_btn_current');
+    const btnImproved = document.getElementById('{key}_btn_improved');
+    const btnLoop = document.getElementById('{key}_btn_loop');
+    const metricCards = Array.from(root.querySelectorAll('.story-metric'));
+    const metricValues = Array.from(root.querySelectorAll('.story-metric strong'));
+    const metricNotes = Array.from(root.querySelectorAll('.story-metric small'));
+    let state = 'current';
+    let looping = true;
+    let timer = null;
+    function refreshProgress() {{
+      progressEl.style.animation = 'none';
+      void progressEl.offsetWidth;
+      progressEl.style.animation = `storyProgress ${{data.interval_ms}}ms linear infinite`;
+      progressEl.classList.toggle('paused', !looping);
+    }}
+    function setState(next) {{
+      state = next;
+      const improved = next === 'improved';
+      currentScreen.classList.toggle('active', !improved);
+      improvedScreen.classList.toggle('active', improved);
+      titleEl.textContent = improved ? data.improved_title : data.current_title;
+      textEl.textContent = improved ? data.improved_text : data.current_text;
+      statusEl.textContent = improved ? data.improved_status : data.current_status;
+      statusEl.className = 'story-status ' + (improved ? 'improved' : 'current');
+      dotCurrent.classList.toggle('active', !improved);
+      dotImproved.classList.toggle('active', improved);
+      metricCards.forEach((el, idx) => el.classList.toggle('active', improved && idx === 0));
+      metricValues.forEach(el => {{ el.style.opacity = .25; setTimeout(() => {{ el.textContent = improved ? el.dataset.improved : el.dataset.current; el.style.opacity = 1; }}, 120); }});
+      metricNotes.forEach(el => {{ el.style.opacity = .25; setTimeout(() => {{ el.textContent = improved ? el.dataset.improved : el.dataset.current; el.style.opacity = 1; }}, 120); }});
+      refreshProgress();
+    }}
+    function startLoop() {{
+      if (timer) clearInterval(timer);
+      if (!looping) return;
+      timer = setInterval(() => setState(state === 'current' ? 'improved' : 'current'), data.interval_ms);
+    }}
+    btnCurrent.addEventListener('click', () => {{ setState('current'); }});
+    btnImproved.addEventListener('click', () => {{ setState('improved'); }});
+    btnLoop.addEventListener('click', () => {{
+      looping = !looping;
+      btnLoop.textContent = looping ? 'Pause' : 'Resume';
+      liveEl.textContent = looping ? 'Live story' : 'Manual mode';
+      liveEl.classList.toggle('paused', !looping);
+      refreshProgress();
+      startLoop();
+    }});
+    setState('current');
+    startLoop();
+    </script>
+    </body>
+    </html>
+    """
+    components.html(html, height=height, scrolling=False)
+
 def clamp(value, low, high):
     return max(low, min(high, value))
 
@@ -389,52 +585,6 @@ def impact_card(label, current, improved, note, higher_is_better=True, suffix=''
     """, unsafe_allow_html=True)
 
 
-def render_phone(screen_html):
-    st.markdown(f"""
-        <div class='phone-stage'>
-            <div class='phone-shell'>
-                <div class='phone-notch'></div>
-                <div class='phone-body'>{screen_html}</div>
-            </div>
-        </div>
-    """, unsafe_allow_html=True)
-
-
-
-
-def phone_demo_controls(state_key, auto_key, interval=2.8):
-    if state_key not in st.session_state:
-        st.session_state[state_key] = 'current'
-    if auto_key not in st.session_state:
-        st.session_state[auto_key] = True
-    c1, c2, c3 = st.columns([1, 1, 1.1])
-    cur_label = '● Current' if st.session_state[state_key] == 'current' else 'Current'
-    imp_label = '● Best case' if st.session_state[state_key] == 'improved' else 'Best case'
-    loop_label = 'Pause live demo' if st.session_state[auto_key] else 'Start live demo'
-    with c1:
-        if st.button(cur_label, key=f'{state_key}_current', use_container_width=True):
-            st.session_state[state_key] = 'current'
-            st.session_state[auto_key] = False
-            st.rerun()
-    with c2:
-        if st.button(imp_label, key=f'{state_key}_improved', use_container_width=True):
-            st.session_state[state_key] = 'improved'
-            st.session_state[auto_key] = False
-            st.rerun()
-    with c3:
-        if st.button(loop_label, key=f'{state_key}_loop', use_container_width=True):
-            st.session_state[auto_key] = not st.session_state[auto_key]
-            st.rerun()
-    return st.session_state[state_key], st.session_state[auto_key]
-
-
-def autoplay_demo(state_key, auto_key, interval=2.8):
-    if st.session_state.get(auto_key, False):
-        st.caption(f'Live demo mode is on. The app story flips every {interval:.1f} seconds and keeps the impact narrative in sync.')
-        time.sleep(interval)
-        st.session_state[state_key] = 'improved' if st.session_state.get(state_key, 'current') == 'current' else 'current'
-        st.rerun()
-
 
 
 def master_ps1(view):
@@ -464,7 +614,6 @@ def master_ps1(view):
     eta_best = max(3, int(round(eta_now - max(1, current_eta * 0.55))))
     recovery_credit = int(round(min(25, 8 + current_bad / 2)))
     issue_count = int((view['booking_risk_score'] >= 70).sum())
-    state = st.session_state.get('ps1_demo_state', 'current')
 
     problem_screen = f"""
     <div class='phone-status'><span>9:41</span><span>5G 92%</span></div>
@@ -519,28 +668,25 @@ def master_ps1(view):
     <div class='phone-cta'>Confirm protected ride</div>
     """
 
-    demo_left, demo_right = st.columns([1.08, .92])
-    with demo_left:
-        section_open('Customer app demo','Switch the phone below to show the broken ride-booking journey versus the best-case customer experience after the recommended fix.')
-        render_phone(problem_screen if state == 'current' else improved_screen)
-        state, autoplay = phone_demo_controls('ps1_demo_state', 'ps1_demo_auto', interval=3.0)
-        section_close()
+story_payload = {
+    'kicker': 'Customer app demo · Driver Trust',
+    'current_title': 'Current experience: booking feels fragile',
+    'current_text': 'The booking flow feels uncertain because the customer sees low-supply friction, weaker dispatch quality, and no visible promise that Grab will recover the experience if it breaks.',
+    'current_status': 'Why it feels bad: the app surfaces demand pressure before it surfaces reassurance.',
+    'improved_title': 'Best case: the ride is protected inside the journey',
+    'improved_text': 'The app now behaves like a real product fix: stronger driver matching, a believable ETA, and automatic recovery all appear naturally inside the ride-booking flow.',
+    'improved_status': 'What changed: reliable-driver override, tighter zone dispatch, and built-in recovery make the experience feel trustworthy before checkout.',
+    'interval_ms': 3200,
+    'metrics': [
+        {'label': 'Bad booking rate', 'current': f'{current_bad:.1f}%', 'improved': f'{improved_bad:.1f}%', 'current_note': 'Broken-booking exposure today.', 'improved_note': 'Lower after safer matching and dispatch.'},
+        {'label': 'ETA gap', 'current': f'{current_eta:.1f} min', 'improved': f'{improved_eta:.1f} min', 'current_note': 'Promised versus actual arrival gap.', 'improved_note': 'Narrower after operational correction.'},
+        {'label': 'Trust score', 'current': f'{current_trust:.0f}/100', 'improved': f'{improved_trust:.0f}/100', 'current_note': 'Customer confidence in the booking flow.', 'improved_note': 'Higher once reliability and recovery are visible.'},
+    ],
+    'current_screen': problem_screen,
+    'improved_screen': improved_screen,
+}
+render_story_demo('ps1_story', story_payload, height=800)
 
-    with demo_right:
-        section_open('Best-case scenario','The improved phone state is wired to the prescriptive action: reliable-driver override, tighter zone incentives, and service recovery.')
-        if state == 'current':
-            st.markdown("<div class='action-box amber'><h4>Live view: current customer pain</h4><p>The customer is still facing uncertain dispatch, wider ETA misses, and weak recovery reassurance inside the booking flow.</p></div>", unsafe_allow_html=True)
-        else:
-            st.markdown("<div class='action-box green'><h4>Live view: best-case experience</h4><p>The customer now sees a stable driver match, believable ETA, and built-in service recovery that restores trust before checkout.</p></div>", unsafe_allow_html=True)
-        impact_card('Bad booking rate', current_bad, improved_bad, 'Lower broken-booking exposure after safe matching and stricter dispatch.', higher_is_better=False, suffix='%')
-        impact_card('ETA gap', current_eta, improved_eta, 'Promised versus actual arrival narrows when supply and dispatch are corrected.', higher_is_better=False, suffix=' min')
-        impact_card('Trust score', current_trust, improved_trust, 'Stable assignment and recovery messaging rebuild confidence at the decision moment.', suffix='')
-        st.markdown(f"<div class='sim-note'><strong>Why the current experience breaks:</strong> {current_high_risk:.1f}% of customers are exposed to high-risk drivers, low-supply-zone exposure is {current_low_supply:.1f}%, and rush-hour pressure is {current_rush:.1f}%. Those signals are exactly what the prescriptive logic is targeting.</div>", unsafe_allow_html=True)
-        st.markdown("""
-        <div class='action-box green'><h4>What the customer feels after the fix</h4><p>A more reliable driver is assigned earlier, the ETA becomes believable, and the app clearly promises recovery if the trip still goes wrong.</p></div>
-        <div class='action-box amber'><h4>Why this differentiates your dashboard</h4><p>The analytics do not stop at insight. They translate directly into an in-app product experience that an executive can see and understand in one glance.</p></div>
-        """, unsafe_allow_html=True)
-        section_close()
 
     a,b = st.columns(2)
     with a:
@@ -574,8 +720,6 @@ def master_ps1(view):
         <div class='action-box amber'><h4>Operations priority</h4><p>Send targeted incentives into low-supply rush-hour zones.</p><p>Why supply imbalance is driving avoidable delay and cancellation exposure.</p></div>
         <div class='action-box red'><h4>Control priority</h4><p>Escalate High-Risk driver tier for warning, reduced visibility, or review.</p><p>Why complaints and failure rates are already elevated.</p></div>
         """, unsafe_allow_html=True)
-
-    autoplay_demo('ps1_demo_state', 'ps1_demo_auto', interval=3.0)
 
 
 def descriptive_ps1(view):
@@ -714,7 +858,6 @@ def master_ps2(view):
 
     bundle_save = int(round(8 + improved_cross / 10))
     points_boost = int(round(2 + improved_depth))
-    state = st.session_state.get('ps2_demo_state', 'current')
 
     problem_screen = f"""
     <div class='phone-status'><span>9:41</span><span>5G 92%</span></div>
@@ -769,27 +912,25 @@ def master_ps2(view):
     <div class='phone-cta'>Unlock my bundle</div>
     """
 
-    demo_left, demo_right = st.columns([1.08, .92])
-    with demo_left:
-        section_open('Customer app demo','See how a generic home feed keeps customers single-service, then switch to the improved Grab app experience powered by your prescriptive logic.')
-        render_phone(problem_screen if state == 'current' else improved_screen)
-        state, autoplay = phone_demo_controls('ps2_demo_state', 'ps2_demo_auto', interval=3.0)
-        section_close()
-    with demo_right:
-        section_open('Best-case scenario','The improved home screen uses consent-safe next-best-service targeting, fading-user rescue, and power-user protection.')
-        if state == 'current':
-            st.markdown("<div class='action-box amber'><h4>Live view: current customer pain</h4><p>The home screen is still generic, so the customer sees weak discovery and has little reason to form a second Grab habit.</p></div>", unsafe_allow_html=True)
-        else:
-            st.markdown("<div class='action-box green'><h4>Live view: best-case experience</h4><p>The home screen now behaves like a personalised assistant, surfacing the most relevant next service instead of a generic promotion.</p></div>", unsafe_allow_html=True)
-        impact_card('Single-service share', single_share, improved_single, 'Lower dependency means stronger ecosystem behavior.', higher_is_better=False, suffix='%')
-        impact_card('Cross-sell propensity', crosssell, improved_cross, 'Personalised offers raise the chance of the next service being adopted.', suffix='')
-        impact_card('Churn risk', churn, improved_churn, 'Better relevance and more depth reduce the likelihood of drop-off.', higher_is_better=False, suffix='')
-        st.markdown(f"<div class='sim-note'><strong>Why the current experience underperforms:</strong> average service depth is only {service_depth:.1f}, single-service dependency is {single_share:.1f}%, and the customer segment most frequently appearing in this view is <strong>{focus_segment}</strong>. The prescriptive action fixes that by putting the right next service inside the home feed.</div>", unsafe_allow_html=True)
-        st.markdown("""
-        <div class='action-box green'><h4>What the customer feels after the fix</h4><p>The app stops behaving like a static menu and starts acting like a personal growth engine, with a next-best-service suggestion that actually fits the user.</p></div>
-        <div class='action-box amber'><h4>Executive takeaway</h4><p>This connects growth analytics to a visible product change: the home screen itself becomes the intervention.</p></div>
-        """, unsafe_allow_html=True)
-        section_close()
+story_payload = {
+    'kicker': 'Customer app demo · Super-App Growth',
+    'current_title': 'Current experience: the home feed feels generic',
+    'current_text': 'The customer opens Grab and sees a broad offer, but nothing in the app naturally guides them toward the most relevant next service or a deeper ecosystem habit.',
+    'current_status': 'Why it feels weak: the experience looks promotional, not personal.',
+    'improved_title': 'Best case: the app feels like a smart personal assistant',
+    'improved_text': 'The improved home feed makes discovery feel native to the product, surfacing the right next service at the right time instead of pushing a generic discount.',
+    'improved_status': 'What changed: consent-safe next-best-service logic turns the home screen itself into the intervention.',
+    'interval_ms': 3200,
+    'metrics': [
+        {'label': 'Single-service share', 'current': f'{single_share:.1f}%', 'improved': f'{improved_single:.1f}%', 'current_note': 'Customers still behaving like one-service users.', 'improved_note': 'Lower once the app encourages the next habit.'},
+        {'label': 'Cross-sell propensity', 'current': f'{crosssell:.0f}/100', 'improved': f'{improved_cross:.0f}/100', 'current_note': 'Likelihood of next-service adoption today.', 'improved_note': 'Higher with relevant in-app discovery.'},
+        {'label': 'Churn risk', 'current': f'{churn:.1f}', 'improved': f'{improved_churn:.1f}', 'current_note': 'Drop-off pressure across the portfolio.', 'improved_note': 'Lower when depth and relevance improve.'},
+    ],
+    'current_screen': problem_screen,
+    'improved_screen': improved_screen,
+}
+render_story_demo('ps2_story', story_payload, height=800)
+
 
     a,b = st.columns(2)
     with a:
@@ -822,8 +963,6 @@ def master_ps2(view):
         <div class='action-box amber'><h4>Retention priority</h4><p>Re-activate fading single-service users before inactivity hardens into churn.</p><p>Why recency and narrow usage are early warning signs.</p></div>
         <div class='action-box red'><h4>Value protection</h4><p>Protect power users with bundles and priority support.</p><p>Why they carry the strongest lifetime value and ecosystem habit.</p></div>
         """, unsafe_allow_html=True)
-
-    autoplay_demo('ps2_demo_state', 'ps2_demo_auto', interval=3.0)
 
 
 def descriptive_ps2(view):
@@ -956,7 +1095,6 @@ def master_ps3(view):
     current_total = base_fare * surge + 0.65 * abnormal + 1.30
     improved_total = base_fare * improved_surge + 0.90
     save_amount = max(0.5, current_total - improved_total)
-    state = st.session_state.get('ps3_demo_state', 'current')
 
     problem_screen = f"""
     <div class='phone-status'><span>9:41</span><span>5G 92%</span></div>
@@ -1008,27 +1146,25 @@ def master_ps3(view):
     <div class='phone-cta'>Book with fare protection</div>
     """
 
-    demo_left, demo_right = st.columns([1.08, .92])
-    with demo_left:
-        section_open('Customer app demo','Switch the phone below to show the pricing-shock moment versus the improved transparent checkout powered by your prescriptive policy.')
-        render_phone(problem_screen if state == 'current' else improved_screen)
-        state, autoplay = phone_demo_controls('ps3_demo_state', 'ps3_demo_auto', interval=3.0)
-        section_close()
-    with demo_right:
-        section_open('Best-case scenario','The improved fare screen uses surge-cap enforcement, abnormal-charge recovery, and clearer service assurance.')
-        if state == 'current':
-            st.markdown("<div class='action-box amber'><h4>Live view: current customer pain</h4><p>The customer still sees price shock, weak fee clarity, and limited confidence that Grab will resolve abnormal charges quickly.</p></div>", unsafe_allow_html=True)
-        else:
-            st.markdown("<div class='action-box green'><h4>Live view: best-case experience</h4><p>The checkout now explains the fare, caps the shock for sensitive users, and shows clear protection if the final charge looks wrong.</p></div>", unsafe_allow_html=True)
-        impact_card('Avg surge', surge, improved_surge, 'Visible pricing pressure falls when the guardrail is applied.', higher_is_better=False, suffix='x', decimals=2)
-        impact_card('Fairness score', fairness, improved_fairness, 'Clear fare explanation and recovery support improve trust in the price.', suffix='')
-        impact_card('Abnormal charge flags', abnormal, improved_abnormal, 'Proactive review lowers the number of customers who feel overcharged.', higher_is_better=False, suffix='')
-        st.markdown(f"<div class='sim-note'><strong>Why the current experience feels unfair:</strong> average surge sits at {surge:.2f}x, extreme surge exposure is {extreme:.1f}%, and proactive refund recovery only reaches {refund:.1f}% of customers. The improved screen fixes the exact moment where pricing trust breaks.</div>", unsafe_allow_html=True)
-        st.markdown("""
-        <div class='action-box green'><h4>What the customer feels after the fix</h4><p>They know the final price earlier, understand why it changed, and see that Grab will correct the experience if pricing anomalies still occur.</p></div>
-        <div class='action-box amber'><h4>Executive takeaway</h4><p>The dashboard does not just recommend a pricing rule. It shows the actual checkout experience that rule creates for the customer.</p></div>
-        """, unsafe_allow_html=True)
-        section_close()
+story_payload = {
+    'kicker': 'Customer app demo · Pricing Fairness',
+    'current_title': 'Current experience: pricing feels like a shock',
+    'current_text': 'The customer sees a high fare with limited explanation, unclear fee logic, and weak confidence that Grab will correct abnormal charges quickly.',
+    'current_status': 'Why it feels unfair: price shock appears before trust protection appears.',
+    'improved_title': 'Best case: the checkout explains and protects the fare',
+    'improved_text': 'The improved flow makes pricing feel native and trustworthy by capping the shock, clarifying the fare, and making refund protection visible before confirmation.',
+    'improved_status': 'What changed: surge guardrails and proactive refund logic turn a stressful fare screen into a confident checkout.',
+    'interval_ms': 3200,
+    'metrics': [
+        {'label': 'Avg surge', 'current': f'{surge:.2f}x', 'improved': f'{improved_surge:.2f}x', 'current_note': 'Pricing pressure the customer sees now.', 'improved_note': 'Lower after the fairness guardrail.'},
+        {'label': 'Fairness score', 'current': f'{fairness:.0f}/100', 'improved': f'{improved_fairness:.0f}/100', 'current_note': 'Trust in the fare experience today.', 'improved_note': 'Higher with clearer fare logic and recovery.'},
+        {'label': 'Abnormal charge flags', 'current': f'{abnormal:.1f}', 'improved': f'{improved_abnormal:.1f}', 'current_note': 'Customers exposed to billing doubt.', 'improved_note': 'Lower with proactive review and refund triggers.'},
+    ],
+    'current_screen': problem_screen,
+    'improved_screen': improved_screen,
+}
+render_story_demo('ps3_story', story_payload, height=800)
+
 
     a,b = st.columns(2)
     with a:
@@ -1061,8 +1197,6 @@ def master_ps3(view):
         <div class='action-box amber'><h4>Recovery rule</h4><p>Trigger proactive refund review for repeated abnormal charge flags.</p><p>Why this reduces reputational and regulatory exposure.</p></div>
         <div class='action-box red'><h4>Premium logic</h4><p>Allow higher surge only where convenience-first segments receive service assurance.</p><p>Why higher price without reliability becomes hard to defend.</p></div>
         """, unsafe_allow_html=True)
-
-    autoplay_demo('ps3_demo_state', 'ps3_demo_auto', interval=3.0)
 
 
 def descriptive_ps3(view):
