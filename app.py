@@ -55,6 +55,8 @@ div[data-baseweb="select"] > div, div[data-baseweb="base-input"] > div {{border-
 """, unsafe_allow_html=True)
 
 
+st.markdown("""
+<style>
 .phone-stage {
     background: linear-gradient(180deg, #FCFFFD 0%, #F3FBF6 100%);
     border: 1px solid #DCEEE3;
@@ -173,6 +175,8 @@ div[data-baseweb="select"] > div, div[data-baseweb="base-input"] > div {{border-
 .impact-delta.bad { color: #E5484D; }
 .sim-note { background: #F8FCFA; border: 1px solid #E3F1E9; border-radius: 16px; padding: .85rem .95rem; margin-bottom: .72rem; color: #567061; font-size: .82rem; line-height: 1.55; }
 .sim-note strong { color: #143524; }
+</style>
+""", unsafe_allow_html=True)
 
 alt.theme.enable("default")
 
