@@ -54,6 +54,126 @@ div[data-baseweb="select"] > div, div[data-baseweb="base-input"] > div {{border-
 </style>
 """, unsafe_allow_html=True)
 
+
+.phone-stage {
+    background: linear-gradient(180deg, #FCFFFD 0%, #F3FBF6 100%);
+    border: 1px solid #DCEEE3;
+    border-radius: 22px;
+    padding: 1rem 1rem .85rem 1rem;
+    box-shadow: 0 10px 24px rgba(0,0,0,.04);
+    margin-bottom: .7rem;
+}
+.phone-shell {
+    width: 372px;
+    max-width: 100%;
+    margin: 0 auto;
+    background: #0B1115;
+    border-radius: 42px;
+    padding: 10px;
+    box-shadow: 0 26px 60px rgba(20,53,36,.18), 0 6px 16px rgba(0,0,0,.12);
+}
+.phone-body {
+    background: #F6FBF8;
+    border-radius: 32px;
+    overflow: hidden;
+    min-height: 690px;
+    position: relative;
+}
+.phone-notch {
+    width: 124px;
+    height: 30px;
+    background: #0B1115;
+    border-radius: 0 0 18px 18px;
+    margin: 0 auto 6px auto;
+}
+.phone-status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: .45rem .95rem .1rem .95rem;
+    color: #173B2A;
+    font-size: .72rem;
+    font-weight: 700;
+}
+.phone-header {
+    padding: .55rem 1rem .85rem 1rem;
+    background: linear-gradient(180deg, #EEFBF3 0%, #F7FBF8 100%);
+}
+.phone-brand { color: #00B14F; font-weight: 900; letter-spacing: .02em; font-size: 1rem; }
+.phone-screen-title { margin-top: .18rem; color: #143524; font-size: 1.1rem; font-weight: 800; }
+.phone-subtitle { margin-top: .15rem; color: #5D7768; font-size: .78rem; }
+.phone-map {
+    margin: .85rem 1rem .85rem 1rem;
+    border-radius: 22px;
+    padding: .95rem;
+    min-height: 120px;
+    background: linear-gradient(135deg, #D7F7E4 0%, #EFFAF4 55%, #FFFFFF 100%);
+    border: 1px solid #DCEEE3;
+}
+.phone-route {
+    display: inline-block;
+    background: rgba(255,255,255,.9);
+    border: 1px solid #DCEEE3;
+    border-radius: 16px;
+    padding: .7rem .85rem;
+    color: #143524;
+    box-shadow: 0 6px 14px rgba(0,0,0,.04);
+}
+.phone-route span { display: block; color: #6A8375; font-size: .72rem; margin-bottom: .18rem; }
+.phone-route strong { font-size: .9rem; }
+.phone-panel {
+    background: #FFFFFF;
+    margin: 0 1rem .78rem 1rem;
+    border: 1px solid #DCEEE3;
+    border-radius: 20px;
+    padding: .92rem .95rem;
+    box-shadow: 0 8px 18px rgba(0,0,0,.04);
+}
+.phone-panel.soft { background: #F8FCFA; }
+.phone-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: .7rem;
+    color: #143524;
+    font-weight: 700;
+    font-size: .86rem;
+}
+.phone-copy { color: #5E7868; font-size: .78rem; line-height: 1.5; margin-top: .45rem; }
+.phone-banner { border-radius: 14px; padding: .68rem .78rem; font-size: .76rem; font-weight: 700; margin-top: .75rem; }
+.phone-banner.warn { background: #FFF6E8; color: #9A5F00; border: 1px solid #F8E1BA; }
+.phone-banner.success { background: #EAF8F0; color: #0B6B3A; border: 1px solid #CDEED9; }
+.phone-chip { display: inline-block; padding: .28rem .58rem; border-radius: 999px; font-size: .67rem; font-weight: 800; letter-spacing: .01em; }
+.phone-chip.neutral { color: #476555; background: #EEF5F1; border: 1px solid #DFECE5; }
+.phone-chip.warn { color: #9A5F00; background: #FFF6E8; border: 1px solid #F8E1BA; }
+.phone-chip.success { color: #0B6B3A; background: #EAF8F0; border: 1px solid #CDEED9; }
+.phone-chip.danger { color: #B02C31; background: #FFF0F0; border: 1px solid #F7D5D7; }
+.phone-price { color: #143524; font-size: 1.2rem; font-weight: 900; }
+.phone-mini-kpis { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; margin-top: .8rem; }
+.phone-kpi { background: #F8FCFA; border: 1px solid #E3F1E9; border-radius: 16px; padding: .68rem .72rem; }
+.phone-kpi span { display: block; color: #6A8375; font-size: .68rem; margin-bottom: .18rem; }
+.phone-kpi strong { color: #143524; font-size: .95rem; }
+.phone-cta { margin: .2rem 1rem 1rem 1rem; background: #00B14F; color: #FFFFFF; text-align: center; border-radius: 16px; padding: .88rem 1rem; font-size: .88rem; font-weight: 800; box-shadow: 0 10px 18px rgba(0,177,79,.18); }
+.phone-cta.muted { background: #DFF2E7; color: #0B6B3A; box-shadow: none; }
+.phone-service-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: .55rem; margin-top: .78rem; }
+.phone-service { background: #F8FCFA; border: 1px solid #E3F1E9; border-radius: 16px; padding: .65rem .2rem; text-align: center; color: #143524; font-size: .72rem; font-weight: 800; }
+.phone-service.active { background: linear-gradient(180deg, #EAF8F0 0%, #F4FBF7 100%); border-color: #BFE7CF; color: #0B6B3A; }
+.phone-offer { margin-top: .7rem; background: linear-gradient(135deg, #143524 0%, #0B6B3A 100%); color: #FFFFFF; border-radius: 18px; padding: .9rem .95rem; }
+.phone-offer small { display: block; opacity: .78; margin-bottom: .22rem; }
+.phone-offer strong { display: block; font-size: 1rem; margin-bottom: .22rem; }
+.phone-fare-line { display: flex; justify-content: space-between; align-items: center; color: #143524; font-size: .78rem; padding: .36rem 0; border-bottom: 1px dashed #E3EEE8; }
+.phone-fare-line:last-child { border-bottom: none; }
+.impact-card { background: #FFFFFF; border: 1px solid #DCEEE3; border-radius: 18px; padding: .9rem 1rem; margin-bottom: .72rem; box-shadow: 0 8px 18px rgba(0,0,0,.03); }
+.impact-label { color: #607A6A; font-size: .74rem; text-transform: uppercase; letter-spacing: .08em; }
+.impact-values { display: flex; justify-content: space-between; align-items: flex-end; gap: .8rem; margin-top: .48rem; }
+.impact-current, .impact-best { color: #143524; font-size: 1.1rem; font-weight: 800; }
+.impact-sub { color: #6A8375; font-size: .69rem; margin-top: .08rem; }
+.impact-delta { font-size: .82rem; font-weight: 800; margin-top: .32rem; }
+.impact-delta.good { color: #0B6B3A; }
+.impact-delta.bad { color: #E5484D; }
+.sim-note { background: #F8FCFA; border: 1px solid #E3F1E9; border-radius: 16px; padding: .85rem .95rem; margin-bottom: .72rem; color: #567061; font-size: .82rem; line-height: 1.55; }
+.sim-note strong { color: #143524; }
+
 alt.theme.enable("default")
 
 @st.cache_data
@@ -75,6 +195,7 @@ def header():
     st.markdown("""
     <div class='main-title'>
       <h1>Grab Executive Dashboard</h1>
+      <p>Problem-led analytical views for Driver Trust, Super-App Growth, and Pricing Fairness.</p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -213,6 +334,85 @@ def top_rows(df, cols, sort_cols, ascending, n=12):
     return df[cols].sort_values(sort_cols, ascending=ascending).head(n)
 
 
+
+
+def clamp(value, low, high):
+    return max(low, min(high, value))
+
+
+def fmt_metric(value, suffix='', decimals=1):
+    return f"{float(value):,.{decimals}f}{suffix}"
+
+
+def first_mode(series, fallback='Selected market'):
+    series = series.dropna()
+    return fallback if series.empty else str(series.mode().iloc[0])
+
+
+def top_group(df, group_col, value_col, fallback='Selected market'):
+    if df.empty:
+        return fallback
+    grp = df.groupby(group_col, as_index=False)[value_col].mean().sort_values(value_col, ascending=False)
+    return fallback if grp.empty else str(grp.iloc[0][group_col])
+
+
+def impact_card(label, current, improved, note, higher_is_better=True, suffix='', decimals=1):
+    delta = float(improved) - float(current)
+    good = delta >= 0 if higher_is_better else delta <= 0
+    cls = 'good' if good else 'bad'
+    if abs(delta) < 1e-9:
+        delta_text = 'No change'
+    else:
+        arrow = '▲' if delta > 0 else '▼'
+        delta_text = f"{arrow} {fmt_metric(abs(delta), suffix=suffix, decimals=decimals)}"
+    st.markdown(f"""
+        <div class='impact-card'>
+            <div class='impact-label'>{label}</div>
+            <div class='impact-values'>
+                <div>
+                    <div class='impact-current'>{fmt_metric(current, suffix=suffix, decimals=decimals)}</div>
+                    <div class='impact-sub'>Current</div>
+                </div>
+                <div style='text-align:right'>
+                    <div class='impact-best'>{fmt_metric(improved, suffix=suffix, decimals=decimals)}</div>
+                    <div class='impact-sub'>Best case</div>
+                </div>
+            </div>
+            <div class='impact-delta {cls}'>{delta_text}</div>
+            <div class='impact-sub'>{note}</div>
+        </div>
+    """, unsafe_allow_html=True)
+
+
+def render_phone(screen_html):
+    st.markdown(f"""
+        <div class='phone-stage'>
+            <div class='phone-shell'>
+                <div class='phone-notch'></div>
+                <div class='phone-body'>{screen_html}</div>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
+
+
+def phone_state_buttons(key):
+    if key not in st.session_state:
+        st.session_state[key] = 'current'
+    c1, c2 = st.columns(2)
+    cur_label = '● Current experience' if st.session_state[key] == 'current' else 'Current experience'
+    imp_label = '● Improved experience' if st.session_state[key] == 'improved' else 'Improved experience'
+    with c1:
+        if st.button(cur_label, key=f'{key}_current', use_container_width=True):
+            st.session_state[key] = 'current'
+            st.rerun()
+    with c2:
+        if st.button(imp_label, key=f'{key}_improved', use_container_width=True):
+            st.session_state[key] = 'improved'
+            st.rerun()
+    return st.session_state[key]
+
+
+
 def master_ps1(view):
     c1,c2,c3,c4,c5 = st.columns(5)
     kpi_card(c1,'Bad booking rate',f"{view['bad_booking_label'].mean()*100:.1f}%",'Bookings likely to fail or delay')
@@ -220,6 +420,99 @@ def master_ps1(view):
     kpi_card(c3,'High-risk driver exposure',f"{(view['assigned_driver_tier']=='High-Risk').mean()*100:.1f}%",'Share matched to weak drivers')
     kpi_card(c4,'Complaint load',f"{view['complaint_count_90d'].mean():.1f}",'Average complaints over 90d')
     kpi_card(c5,'Trust score',f"{view['trust_score'].mean():.1f}",'Higher is better')
+
+    current_bad = float(view['bad_booking_label'].mean() * 100)
+    current_eta = float(view['eta_gap_min'].mean())
+    current_trust = float(view['trust_score'].mean())
+    current_high_risk = float((view['assigned_driver_tier'] == 'High-Risk').mean() * 100)
+    current_low_supply = float(view['low_supply_zone_share'].mean() * 100)
+    current_rush = float(view['rush_hour_share'].mean() * 100)
+    focus_country = top_group(view, 'country', 'bad_booking_label', 'Selected market')
+    focus_tier = first_mode(view['assigned_driver_tier'], 'Standard')
+
+    booking_lift = min(0.38, 0.16 + (current_high_risk / 100) * 0.14 + (current_low_supply / 100) * 0.10)
+    eta_lift = min(0.34, 0.10 + (current_low_supply / 100) * 0.14 + (current_rush / 100) * 0.08)
+    improved_bad = clamp(current_bad * (1 - booking_lift), 2.0, current_bad)
+    improved_eta = clamp(current_eta * (1 - eta_lift), 1.0, current_eta)
+    improved_trust = clamp(current_trust + max(0, current_bad - improved_bad) * 0.55 + max(0, current_eta - improved_eta) * 1.80 + 3.0, current_trust, 100.0)
+
+    eta_now = max(4, int(round(7 + current_eta)))
+    eta_best = max(3, int(round(eta_now - max(1, current_eta * 0.55))))
+    recovery_credit = int(round(min(25, 8 + current_bad / 2)))
+    issue_count = int((view['booking_risk_score'] >= 70).sum())
+    state = st.session_state.get('ps1_demo_state', 'current')
+
+    problem_screen = f"""
+    <div class='phone-status'><span>9:41</span><span>5G 92%</span></div>
+    <div class='phone-header'>
+        <div class='phone-brand'>Grab</div>
+        <div class='phone-screen-title'>Book ride</div>
+        <div class='phone-subtitle'>{focus_country} · Airport trip</div>
+    </div>
+    <div class='phone-map'>
+        <div class='phone-route'><span>Pickup</span><strong>Home</strong><span style='margin-top:.45rem'>Drop-off</span><strong>Airport T1</strong></div>
+        <div style='margin-top:.7rem'><span class='phone-chip warn'>Low supply in your zone</span></div>
+    </div>
+    <div class='phone-panel'>
+        <div class='phone-row'><span>JustGrab</span><span class='phone-price'>{eta_now} min</span></div>
+        <div class='phone-banner warn'>Driver changed again. Similar bookings in this context fail or break trust {current_bad:.1f}% of the time.</div>
+        <div class='phone-mini-kpis'>
+            <div class='phone-kpi'><span>ETA miss</span><strong>{current_eta:.1f} min</strong></div>
+            <div class='phone-kpi'><span>Trust</span><strong>{current_trust:.0f}/100</strong></div>
+        </div>
+    </div>
+    <div class='phone-panel soft'>
+        <div class='phone-row'><span>What the customer sees</span><span class='phone-chip danger'>Uncertain</span></div>
+        <div class='phone-copy'>Matched to {focus_tier} supply, delayed ETAs, and no clear recovery promise if the booking fails.</div>
+        <div class='phone-copy'><strong>{issue_count}</strong> customers in the current filtered portfolio are already above the risk threshold.</div>
+    </div>
+    <div class='phone-cta muted'>Retry booking</div>
+    """
+
+    improved_screen = f"""
+    <div class='phone-status'><span>9:41</span><span>5G 92%</span></div>
+    <div class='phone-header'>
+        <div class='phone-brand'>Grab</div>
+        <div class='phone-screen-title'>Protected ride</div>
+        <div class='phone-subtitle'>{focus_country} · Reliable-driver override applied</div>
+    </div>
+    <div class='phone-map'>
+        <div class='phone-route'><span>Pickup</span><strong>Home</strong><span style='margin-top:.45rem'>Drop-off</span><strong>Airport T1</strong></div>
+        <div style='margin-top:.7rem'><span class='phone-chip success'>ETA locked</span> <span class='phone-chip success'>Recovery ready</span></div>
+    </div>
+    <div class='phone-panel'>
+        <div class='phone-row'><span>Reliable Driver Match</span><span class='phone-price'>{eta_best} min</span></div>
+        <div class='phone-banner success'>High-risk dispatch removed. If your driver is late, a ${recovery_credit} service credit is already protected.</div>
+        <div class='phone-mini-kpis'>
+            <div class='phone-kpi'><span>Bad booking risk</span><strong>{improved_bad:.1f}%</strong></div>
+            <div class='phone-kpi'><span>Trust</span><strong>{improved_trust:.0f}/100</strong></div>
+        </div>
+    </div>
+    <div class='phone-panel soft'>
+        <div class='phone-row'><span>What improved</span><span class='phone-chip success'>Stable</span></div>
+        <div class='phone-copy'>Reliable-driver override, tighter dispatch in low-supply zones, and automatic recovery messaging remove the uncertainty from the ride-booking moment.</div>
+    </div>
+    <div class='phone-cta'>Confirm protected ride</div>
+    """
+
+    demo_left, demo_right = st.columns([1.08, .92])
+    with demo_left:
+        section_open('Customer app demo','Switch the phone below to show the broken ride-booking journey versus the best-case customer experience after the recommended fix.')
+        render_phone(problem_screen if state == 'current' else improved_screen)
+        phone_state_buttons('ps1_demo_state')
+        section_close()
+
+    with demo_right:
+        section_open('Best-case scenario','The improved phone state is wired to the prescriptive action: reliable-driver override, tighter zone incentives, and service recovery.')
+        impact_card('Bad booking rate', current_bad, improved_bad, 'Lower broken-booking exposure after safe matching and stricter dispatch.', higher_is_better=False, suffix='%')
+        impact_card('ETA gap', current_eta, improved_eta, 'Promised versus actual arrival narrows when supply and dispatch are corrected.', higher_is_better=False, suffix=' min')
+        impact_card('Trust score', current_trust, improved_trust, 'Stable assignment and recovery messaging rebuild confidence at the decision moment.', suffix='')
+        st.markdown(f"<div class='sim-note'><strong>Why the current experience breaks:</strong> {current_high_risk:.1f}% of customers are exposed to high-risk drivers, low-supply-zone exposure is {current_low_supply:.1f}%, and rush-hour pressure is {current_rush:.1f}%. Those signals are exactly what the prescriptive logic is targeting.</div>", unsafe_allow_html=True)
+        st.markdown("""
+        <div class='action-box green'><h4>What the customer feels after the fix</h4><p>A more reliable driver is assigned earlier, the ETA becomes believable, and the app clearly promises recovery if the trip still goes wrong.</p></div>
+        <div class='action-box amber'><h4>Why this differentiates your dashboard</h4><p>The analytics do not stop at insight. They translate directly into an in-app product experience that an executive can see and understand in one glance.</p></div>
+        """, unsafe_allow_html=True)
+        section_close()
 
     a,b = st.columns(2)
     with a:
@@ -249,9 +542,9 @@ def master_ps1(view):
         section_close()
     with y:
         st.markdown(f"""
-        <div class='action-box green'><h4>Decision priority</h4><p>Auto-reassign high-value riders when booking risk exceeds 70.</p><p>Why: this group combines high trust-loss risk and high value.</p></div>
-        <div class='action-box amber'><h4>Operations priority</h4><p>Send targeted incentives into low-supply rush-hour zones.</p><p>Why: supply imbalance is driving avoidable delay and cancellation exposure.</p></div>
-        <div class='action-box red'><h4>Control priority</h4><p>Escalate High-Risk driver tier for warning, reduced visibility, or review.</p><p>Why: complaints and failure rates are already elevated.</p></div>
+        <div class='action-box green'><h4>Decision priority</h4><p>Auto-reassign high-value customers when booking risk exceeds 70.</p><p>Why this group combines high trust-loss risk and high value.</p></div>
+        <div class='action-box amber'><h4>Operations priority</h4><p>Send targeted incentives into low-supply rush-hour zones.</p><p>Why supply imbalance is driving avoidable delay and cancellation exposure.</p></div>
+        <div class='action-box red'><h4>Control priority</h4><p>Escalate High-Risk driver tier for warning, reduced visibility, or review.</p><p>Why complaints and failure rates are already elevated.</p></div>
         """, unsafe_allow_html=True)
 
 
@@ -365,6 +658,7 @@ def prescriptive_ps1(view):
         section_close()
 
 
+
 def master_ps2(view):
     c1,c2,c3,c4,c5 = st.columns(5)
     kpi_card(c1,'Single-service share',f"{(view['services_used_count']<=1).mean()*100:.1f}%",'Users not acting like super-app customers')
@@ -372,6 +666,96 @@ def master_ps2(view):
     kpi_card(c3,'Cross-sell propensity',f"{view['cross_sell_propensity'].mean():.1f}",'Likelihood of next-service adoption')
     kpi_card(c4,'Churn risk',f"{view['churn_risk_score'].mean():.1f}",'Portfolio average')
     kpi_card(c5,'12m CLV',f"${view['clv_12m_usd'].mean():.0f}",'Average customer value')
+
+    single_share = float((view['services_used_count'] <= 1).mean() * 100)
+    service_depth = float(view['services_used_count'].mean())
+    crosssell = float(view['cross_sell_propensity'].mean())
+    churn = float(view['churn_risk_score'].mean())
+    consent = float(view['pdpa_contact_ok'].mean() * 100)
+    promo = float(view['promo_response_rate'].mean() * 100)
+    primary_service = first_mode(view['primary_service'], 'Grab')
+    next_best = first_mode(view['next_best_service'], 'GrabUnlimited')
+    focus_segment = first_mode(view['superapp_segment'], 'At-Risk Single-App User')
+
+    improved_single = clamp(single_share * (1 - min(0.30, 0.12 + crosssell / 250 + consent / 500)), 8.0, single_share)
+    improved_cross = clamp(crosssell + 10 + promo / 10 + max(0, 2 - service_depth) * 4, crosssell, 100.0)
+    improved_churn = clamp(churn - (8 + consent / 25 + max(0, 2 - service_depth) * 5), 8.0, churn)
+    improved_depth = clamp(service_depth + 0.65, service_depth, 4.0)
+
+    bundle_save = int(round(8 + improved_cross / 10))
+    points_boost = int(round(2 + improved_depth))
+    state = st.session_state.get('ps2_demo_state', 'current')
+
+    problem_screen = f"""
+    <div class='phone-status'><span>9:41</span><span>5G 92%</span></div>
+    <div class='phone-header'>
+        <div class='phone-brand'>Grab</div>
+        <div class='phone-screen-title'>Home</div>
+        <div class='phone-subtitle'>Customer mostly anchored in {primary_service}</div>
+    </div>
+    <div class='phone-panel'>
+        <div class='phone-row'><span>Services</span><span class='phone-chip neutral'>Generic home</span></div>
+        <div class='phone-service-grid'>
+            <div class='phone-service active'>{primary_service}</div>
+            <div class='phone-service'>Mart</div>
+            <div class='phone-service'>Ride</div>
+            <div class='phone-service'>Pay</div>
+        </div>
+    </div>
+    <div class='phone-panel'>
+        <div class='phone-row'><span>Offer shown today</span><span class='phone-chip warn'>Low relevance</span></div>
+        <div class='phone-copy'>The user sees a broad discount, but there is no clear next-best-service journey even though churn pressure is {churn:.1f} and single-service dependency is still {single_share:.1f}%.</div>
+        <div class='phone-mini-kpis'>
+            <div class='phone-kpi'><span>Services used</span><strong>{service_depth:.1f}</strong></div>
+            <div class='phone-kpi'><span>Cross-sell</span><strong>{crosssell:.0f}/100</strong></div>
+        </div>
+    </div>
+    <div class='phone-panel soft'>
+        <div class='phone-row'><span>Why growth stalls</span><span class='phone-chip danger'>Friction</span></div>
+        <div class='phone-copy'>The customer is treated like everyone else, instead of being nudged toward {next_best} when the data already suggests that route.</div>
+    </div>
+    <div class='phone-cta muted'>Browse offers</div>
+    """
+
+    improved_screen = f"""
+    <div class='phone-status'><span>9:41</span><span>5G 92%</span></div>
+    <div class='phone-header'>
+        <div class='phone-brand'>Grab</div>
+        <div class='phone-screen-title'>For you</div>
+        <div class='phone-subtitle'>Next-best-service offer shown only where consent and propensity are strong</div>
+    </div>
+    <div class='phone-panel'>
+        <div class='phone-row'><span>Personalised growth card</span><span class='phone-chip success'>Best next step</span></div>
+        <div class='phone-offer'><small>Based on your {primary_service} habits</small><strong>Try {next_best}</strong>Save {bundle_save}% with a curated bundle and earn {points_boost}x points on your next order.</div>
+        <div class='phone-mini-kpis'>
+            <div class='phone-kpi'><span>Cross-sell</span><strong>{improved_cross:.0f}/100</strong></div>
+            <div class='phone-kpi'><span>Depth</span><strong>{improved_depth:.1f}</strong></div>
+        </div>
+    </div>
+    <div class='phone-panel soft'>
+        <div class='phone-row'><span>What improved</span><span class='phone-chip success'>Relevant</span></div>
+        <div class='phone-copy'>The app now shows a consent-safe, next-best-service path instead of a generic promo. That makes the home screen feel smarter and increases the chance of a second habit forming.</div>
+    </div>
+    <div class='phone-cta'>Unlock my bundle</div>
+    """
+
+    demo_left, demo_right = st.columns([1.08, .92])
+    with demo_left:
+        section_open('Customer app demo','See how a generic home feed keeps customers single-service, then switch to the improved Grab app experience powered by your prescriptive logic.')
+        render_phone(problem_screen if state == 'current' else improved_screen)
+        phone_state_buttons('ps2_demo_state')
+        section_close()
+    with demo_right:
+        section_open('Best-case scenario','The improved home screen uses consent-safe next-best-service targeting, fading-user rescue, and power-user protection.')
+        impact_card('Single-service share', single_share, improved_single, 'Lower dependency means stronger ecosystem behavior.', higher_is_better=False, suffix='%')
+        impact_card('Cross-sell propensity', crosssell, improved_cross, 'Personalised offers raise the chance of the next service being adopted.', suffix='')
+        impact_card('Churn risk', churn, improved_churn, 'Better relevance and more depth reduce the likelihood of drop-off.', higher_is_better=False, suffix='')
+        st.markdown(f"<div class='sim-note'><strong>Why the current experience underperforms:</strong> average service depth is only {service_depth:.1f}, single-service dependency is {single_share:.1f}%, and the customer segment most frequently appearing in this view is <strong>{focus_segment}</strong>. The prescriptive action fixes that by putting the right next service inside the home feed.</div>", unsafe_allow_html=True)
+        st.markdown("""
+        <div class='action-box green'><h4>What the customer feels after the fix</h4><p>The app stops behaving like a static menu and starts acting like a personal growth engine, with a next-best-service suggestion that actually fits the user.</p></div>
+        <div class='action-box amber'><h4>Executive takeaway</h4><p>This connects growth analytics to a visible product change: the home screen itself becomes the intervention.</p></div>
+        """, unsafe_allow_html=True)
+        section_close()
 
     a,b = st.columns(2)
     with a:
@@ -391,6 +775,7 @@ def master_ps2(view):
         flow = view.groupby(['primary_service','next_best_service'], as_index=False).size().rename(columns={'size':'Customers'}).sort_values('Customers', ascending=False)
         st.dataframe(flow.head(12), use_container_width=True, hide_index=True)
         section_close()
+
     x,y = st.columns([1.1,.9])
     with x:
         section_open('Value at risk','Higher churn pressure combined with low service depth is the key growth gap.')
@@ -399,9 +784,9 @@ def master_ps2(view):
         section_close()
     with y:
         st.markdown(f"""
-        <div class='action-box green'><h4>Growth priority</h4><p>Cross-sell only where consent and high propensity both exist.</p><p>Why: this improves conversion without creating compliance waste.</p></div>
-        <div class='action-box amber'><h4>Retention priority</h4><p>Re-activate fading single-service users before inactivity hardens into churn.</p><p>Why: recency and narrow usage are early warning signs.</p></div>
-        <div class='action-box red'><h4>Value protection</h4><p>Protect power users with bundles and priority support.</p><p>Why: they carry the strongest lifetime value and ecosystem habit.</p></div>
+        <div class='action-box green'><h4>Growth priority</h4><p>Cross-sell only where consent and high propensity both exist.</p><p>Why this improves conversion without creating compliance waste.</p></div>
+        <div class='action-box amber'><h4>Retention priority</h4><p>Re-activate fading single-service users before inactivity hardens into churn.</p><p>Why recency and narrow usage are early warning signs.</p></div>
+        <div class='action-box red'><h4>Value protection</h4><p>Protect power users with bundles and priority support.</p><p>Why they carry the strongest lifetime value and ecosystem habit.</p></div>
         """, unsafe_allow_html=True)
 
 
@@ -509,6 +894,7 @@ def prescriptive_ps2(view):
         section_close()
 
 
+
 def master_ps3(view):
     c1,c2,c3,c4,c5 = st.columns(5)
     kpi_card(c1,'Avg surge',f"{view['avg_surge_multiplier'].mean():.2f}x",'Average multiplier')
@@ -516,6 +902,93 @@ def master_ps3(view):
     kpi_card(c3,'Abnormal charge flags',f"{view['abnormal_charge_flags_90d'].mean():.1f}",'Potential billing anomalies')
     kpi_card(c4,'Fairness score',f"{view['fare_fairness_score'].mean():.1f}",'Higher is better')
     kpi_card(c5,'Refund recovery',f"{view['proactive_refund_rate'].mean()*100:.1f}%",'Proactive service recovery')
+
+    surge = float(view['avg_surge_multiplier'].mean())
+    extreme = float(view['extreme_surge_exposure_rate'].mean() * 100)
+    abnormal = float(view['abnormal_charge_flags_90d'].mean())
+    fairness = float(view['fare_fairness_score'].mean())
+    refund = float(view['proactive_refund_rate'].mean() * 100)
+    sensitivity = first_mode(view['price_sensitivity_segment'], 'Highly Sensitive')
+    cap_now = float(pd.to_numeric(view['surge_cap_recommendation'], errors='coerce').dropna().mean()) if not pd.to_numeric(view['surge_cap_recommendation'], errors='coerce').dropna().empty else 1.50
+
+    improved_surge = clamp(min(1.50, cap_now, surge - 0.12 if surge > 1.50 else surge), 1.10, surge)
+    improved_fairness = clamp(fairness + max(0, surge - improved_surge) * 24 + min(abnormal, 4) * 1.5 + 5.0, fairness, 100.0)
+    improved_abnormal = clamp(abnormal - 0.9, 0.0, abnormal)
+    improved_refund = clamp(refund + 18.0, refund, 100.0)
+
+    base_fare = 11.80
+    current_total = base_fare * surge + 0.65 * abnormal + 1.30
+    improved_total = base_fare * improved_surge + 0.90
+    save_amount = max(0.5, current_total - improved_total)
+    state = st.session_state.get('ps3_demo_state', 'current')
+
+    problem_screen = f"""
+    <div class='phone-status'><span>9:41</span><span>5G 92%</span></div>
+    <div class='phone-header'>
+        <div class='phone-brand'>Grab</div>
+        <div class='phone-screen-title'>Fare estimate</div>
+        <div class='phone-subtitle'>{sensitivity} customer · price check before booking</div>
+    </div>
+    <div class='phone-panel'>
+        <div class='phone-row'><span>Ride total</span><span class='phone-price'>${current_total:.2f}</span></div>
+        <div class='phone-banner warn'>Surge is {surge:.2f}x right now. Some extras may still change after the trip.</div>
+        <div class='phone-fare-line'><span>Base fare</span><span>${base_fare:.2f}</span></div>
+        <div class='phone-fare-line'><span>Surge multiplier</span><span>{surge:.2f}x</span></div>
+        <div class='phone-fare-line'><span>Other fees</span><span>Calculated later</span></div>
+    </div>
+    <div class='phone-panel soft'>
+        <div class='phone-row'><span>What the customer feels</span><span class='phone-chip danger'>Unfair</span></div>
+        <div class='phone-copy'>Fairness score is only {fairness:.1f}/100 while abnormal charge flags average {abnormal:.1f}. The customer sees a high price, but not a strong explanation or recovery promise.</div>
+        <div class='phone-mini-kpis'>
+            <div class='phone-kpi'><span>Extreme surge</span><strong>{extreme:.1f}%</strong></div>
+            <div class='phone-kpi'><span>Refund recovery</span><strong>{refund:.0f}%</strong></div>
+        </div>
+    </div>
+    <div class='phone-cta muted'>Review fare</div>
+    """
+
+    improved_screen = f"""
+    <div class='phone-status'><span>9:41</span><span>5G 92%</span></div>
+    <div class='phone-header'>
+        <div class='phone-brand'>Grab</div>
+        <div class='phone-screen-title'>Protected pricing</div>
+        <div class='phone-subtitle'>Fairness guardrail applied for sensitive customers</div>
+    </div>
+    <div class='phone-panel'>
+        <div class='phone-row'><span>Ride total</span><span class='phone-price'>${improved_total:.2f}</span></div>
+        <div class='phone-banner success'>Surge capped at {improved_surge:.2f}x, full fare shown up front, and refund review is triggered automatically if anything looks abnormal.</div>
+        <div class='phone-fare-line'><span>Base fare</span><span>${base_fare:.2f}</span></div>
+        <div class='phone-fare-line'><span>Capped surge</span><span>{improved_surge:.2f}x</span></div>
+        <div class='phone-fare-line'><span>Protection</span><span>Refund eligible</span></div>
+    </div>
+    <div class='phone-panel soft'>
+        <div class='phone-row'><span>What improved</span><span class='phone-chip success'>Transparent</span></div>
+        <div class='phone-copy'>The app now explains the fare clearly, caps surge for sensitive users, and shows a cheaper alternative timing option that saves about ${save_amount:.2f}.</div>
+        <div class='phone-mini-kpis'>
+            <div class='phone-kpi'><span>Fairness</span><strong>{improved_fairness:.0f}/100</strong></div>
+            <div class='phone-kpi'><span>Refund recovery</span><strong>{improved_refund:.0f}%</strong></div>
+        </div>
+    </div>
+    <div class='phone-cta'>Book with fare protection</div>
+    """
+
+    demo_left, demo_right = st.columns([1.08, .92])
+    with demo_left:
+        section_open('Customer app demo','Switch the phone below to show the pricing-shock moment versus the improved transparent checkout powered by your prescriptive policy.')
+        render_phone(problem_screen if state == 'current' else improved_screen)
+        phone_state_buttons('ps3_demo_state')
+        section_close()
+    with demo_right:
+        section_open('Best-case scenario','The improved fare screen uses surge-cap enforcement, abnormal-charge recovery, and clearer service assurance.')
+        impact_card('Avg surge', surge, improved_surge, 'Visible pricing pressure falls when the guardrail is applied.', higher_is_better=False, suffix='x', decimals=2)
+        impact_card('Fairness score', fairness, improved_fairness, 'Clear fare explanation and recovery support improve trust in the price.', suffix='')
+        impact_card('Abnormal charge flags', abnormal, improved_abnormal, 'Proactive review lowers the number of customers who feel overcharged.', higher_is_better=False, suffix='')
+        st.markdown(f"<div class='sim-note'><strong>Why the current experience feels unfair:</strong> average surge sits at {surge:.2f}x, extreme surge exposure is {extreme:.1f}%, and proactive refund recovery only reaches {refund:.1f}% of customers. The improved screen fixes the exact moment where pricing trust breaks.</div>", unsafe_allow_html=True)
+        st.markdown("""
+        <div class='action-box green'><h4>What the customer feels after the fix</h4><p>They know the final price earlier, understand why it changed, and see that Grab will correct the experience if pricing anomalies still occur.</p></div>
+        <div class='action-box amber'><h4>Executive takeaway</h4><p>The dashboard does not just recommend a pricing rule. It shows the actual checkout experience that rule creates for the customer.</p></div>
+        """, unsafe_allow_html=True)
+        section_close()
 
     a,b = st.columns(2)
     with a:
@@ -532,9 +1005,10 @@ def master_ps3(view):
         st.altair_chart(scatter_chart(view,'avg_surge_multiplier','fare_fairness_score',size='abnormal_charge_flags_90d',color_field='price_sensitivity_segment',palette=[RED,AMBER,GRAB_GREEN],tooltip=['customer_id','avg_surge_multiplier','fare_fairness_score','abnormal_charge_flags_90d','price_sensitivity_segment']), use_container_width=True)
         section_close()
         section_open('Pricing review queue','Users most likely to feel overcharged or churn after a shock.')
-        q = top_rows(view,['customer_id','country','price_sensitivity_segment','avg_surge_multiplier','abnormal_charge_flags_90d','fare_fairness_score','churn_risk_score'],['abnormal_charge_flags_90d','churn_risk_score'],[False,False],12)
+        q = top_rows(view, ['customer_id','country','price_sensitivity_segment','avg_surge_multiplier','abnormal_charge_flags_90d','fare_fairness_score','churn_risk_score'], ['abnormal_charge_flags_90d','churn_risk_score'], [False, False], 12)
         st.dataframe(q, use_container_width=True, hide_index=True)
         section_close()
+
     x,y = st.columns([1.1,.9])
     with x:
         section_open('Policy comparison','Sensitivity segment, elasticity, and recommended cap together.')
@@ -543,9 +1017,9 @@ def master_ps3(view):
         section_close()
     with y:
         st.markdown(f"""
-        <div class='action-box green'><h4>Pricing guardrail</h4><p>Cap surge at 1.5x for highly sensitive users.</p><p>Why: fairness erosion and churn risk are highest here.</p></div>
-        <div class='action-box amber'><h4>Recovery rule</h4><p>Trigger proactive refund review for repeated abnormal charge flags.</p><p>Why: this reduces reputational and regulatory exposure.</p></div>
-        <div class='action-box red'><h4>Premium logic</h4><p>Allow higher surge only where convenience-first segments receive service assurance.</p><p>Why: higher price without reliability becomes hard to defend.</p></div>
+        <div class='action-box green'><h4>Pricing guardrail</h4><p>Cap surge at 1.5x for highly sensitive users.</p><p>Why fairness erosion and churn risk are highest here.</p></div>
+        <div class='action-box amber'><h4>Recovery rule</h4><p>Trigger proactive refund review for repeated abnormal charge flags.</p><p>Why this reduces reputational and regulatory exposure.</p></div>
+        <div class='action-box red'><h4>Premium logic</h4><p>Allow higher surge only where convenience-first segments receive service assurance.</p><p>Why higher price without reliability becomes hard to defend.</p></div>
         """, unsafe_allow_html=True)
 
 
