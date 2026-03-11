@@ -356,7 +356,7 @@ def render_story_demo(key, payload, height=800):
         'improved_text': payload['improved_text'],
         'current_status': payload['current_status'],
         'improved_status': payload['improved_status'],
-        'interval_ms': payload.get('interval_ms', 3200),
+        'interval_ms': payload.get('interval_ms', 4500),
     })
     html = f"""
     <html><head><meta name='viewport' content='width=device-width, initial-scale=1' />
@@ -607,7 +607,7 @@ def master_ps1(view):
         'improved_title': 'Best case: the ride is protected inside the journey',
         'improved_text': 'The app now behaves like a real product fix: stronger driver matching, a believable ETA, and automatic recovery all appear naturally inside the ride-booking flow.',
         'improved_status': 'What changed: reliable-driver override, tighter zone dispatch, and built-in recovery improve trust before checkout.',
-        'interval_ms': 3200,
+        'interval_ms': 4500,
         'metrics': [
             {'label': 'Bad booking rate', 'current': f'{current_bad:.1f}%', 'improved': f'{improved_bad:.1f}%', 'current_note': 'Broken-booking exposure today.', 'improved_note': 'Lower after safer matching and dispatch.'},
             {'label': 'ETA gap', 'current': f'{current_eta:.1f} min', 'improved': f'{improved_eta:.1f} min', 'current_note': 'Promised versus actual arrival gap.', 'improved_note': 'Narrower after operational correction.'},
@@ -851,7 +851,7 @@ def master_ps2(view):
         'improved_title': 'Best case: the app feels like a smart personal assistant',
         'improved_text': 'The improved home feed makes discovery feel native to the product, surfacing the right next service at the right time instead of pushing a generic discount.',
         'improved_status': 'What changed: consent-safe next-best-service logic turns the home screen into the intervention itself.',
-        'interval_ms': 3200,
+        'interval_ms': 4500,
         'metrics': [
             {'label': 'Single-service share', 'current': f'{single_share:.1f}%', 'improved': f'{improved_single:.1f}%', 'current_note': 'Customers still behaving like one-service users.', 'improved_note': 'Lower once the app encourages the next habit.'},
             {'label': 'Cross-sell propensity', 'current': f'{crosssell:.0f}/100', 'improved': f'{improved_cross:.0f}/100', 'current_note': 'Likelihood of next-service adoption today.', 'improved_note': 'Higher with relevant in-app discovery.'},
@@ -1085,7 +1085,7 @@ def master_ps3(view):
         'improved_title': 'Best case: the checkout explains and protects the fare',
         'improved_text': 'The improved flow makes pricing feel native and trustworthy by capping the shock, clarifying the fare, and making refund protection visible before confirmation.',
         'improved_status': 'What changed: surge guardrails and proactive refund logic turn a stressful fare screen into a confident checkout.',
-        'interval_ms': 3200,
+        'interval_ms': 4500,
         'metrics': [
             {'label': 'Avg surge', 'current': f'{surge:.2f}x', 'improved': f'{improved_surge:.2f}x', 'current_note': 'Pricing pressure the customer sees now.', 'improved_note': 'Lower after the fairness guardrail.'},
             {'label': 'Fairness score', 'current': f'{fairness:.0f}/100', 'improved': f'{improved_fairness:.0f}/100', 'current_note': 'Trust in the fare experience today.', 'improved_note': 'Higher with clearer fare logic and recovery.'},
